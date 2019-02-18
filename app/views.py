@@ -17,5 +17,5 @@ def content_list(request, pk):
     feed = Feed.objects.get(pk=pk)
     if feed.submitter_group not in request.user.groups.all() and not request.user.is_superuser:
         return HttpResponseForbidden()
-    content = Content.objects.filter(feed=feed)
+    content = Content.objects.filter(feed=feed).order_by('-end_date')
     return render(request, 'app/content_list.html', {"content": content})
