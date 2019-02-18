@@ -1,0 +1,51 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>MApp - Login</title>
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <!-- Custom styles for this template -->
+    <link href="{% static 'css/floating-labels.css' %}" rel="stylesheet">
+  </head>
+
+  <body>
+    <form class="form-signin" method="post" action="{% url 'login' %}">
+    {% csrf_token %}
+      <div class="text-center mb-4">
+            {% if form.errors %}
+    <p>Your username and password didn't match. Please try again.</p>
+    {% endif %}
+
+    {% if next %}
+        {% if user.is_authenticated %}
+        <p>Your account doesn't have access to this page. To proceed,
+        please login with an account that has access.</p>
+        {% else %}
+        <p>Please login to see this page.</p>
+        {% endif %}
+    {% endif %}
+        <img class="mb-4" src="https://logos.bde-insa-lyon.fr/bde/bde.svg" alt="" width="72" height="72">
+        <h1 class="h3 mb-3 font-weight-normal">Affichage Dynamique</h1>
+      </div>
+
+      <div class="form-label-group">
+        {{ form.username }}
+        <label for="{{ form.username.id_for_label }}">{{ form.username.label_tag }}</label>
+      </div>
+
+      <div class="form-label-group">
+        {{ form.password }}
+        <label for="{{ form.password.id_for_label }}">Password</label>
+      </div><input type="hidden" name="next" value="{{ next }}">
+      <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+      <p class="mt-5 mb-3 text-muted text-center">&copy; 2017-2018</p>
+    </form>
+  </body>
+</html>

@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import *
 # Register your models here.
-@admin.register(Content, FeedGroup, Feed, Screen, Subscription)
+@admin.register(Content, FeedGroup, Feed, Screen, Subscription, Image)
 class Admin(admin.ModelAdmin):
     pass

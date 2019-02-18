@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+    <ul>
+        <div class="row">Aller dans l'admin pour ajouter une sous-equipe<br/>
+            <div>
+                {% for team in object_list %}
+                    {% ifchanged team.feed_group.name %}
+                        </div></div><br/>
+                        <div class="card">
+                        <h5 class="card-header">{{ team.feed_group.name }}</h5>
+                        <div class="card-body">
+                    {% endifchanged %}
+                    <h6><a href="{% url "content_list" team.pk %}">{{ team.name }}</a> <span class="badge badge-secondary">{{ team.count_active }} contenu{{ team.count_active|pluralize }} actif{{ team.count_active|pluralize }}</span></h6>
+
+                {% endfor %}
+                </table>
+    </ul>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="alert alert-primary" role="alert">
+  {{ content.count }} élément{{ content.count |pluralize }} dans ce flux
+</div>
+    <ul class="list-unstyled">
+        {% for content_detail in content %}
+            <li class="media my-4">
+                <img src="{{ content_detail.get_first_content_url }}" height="112.25px" width="200px" class="mr-3" alt="...">
+                <div class="media-body">
+                    <h5 class="mt-0 mb-1"><a href="">{{ content_detail.name }}</a>
+                        {% if content_detail.state == 0 %}
+                            <span class="badge badge-warning">En modération</span>
+                        {% else %}
+                            {% if content_detail.future == 1 %}
+                                <span class="badge badge-info">Programmé</span>
+                            {% elif content_detail.past == 1 %}
+                                <span class="badge badge-dark">Expiré</span>
+                            {% else %}
+                                <span class="badge badge-success">En diffusion</span>
+                            {% endif %}
+                        {% endif %}</h5>
+                    <i class="far fa-calendar-alt"> {{ content_detail.begin_date }} - {{ content_detail.end_date }}</i><br/>
+                    <i class="far fa-hourglass"> {{ content_detail.duration }} seconde{{ content_detail.duration|pluralize }}</i><br/>
+                    <i class="far fa-user"> {{ content_detail.user.first_name }} {{ content_detail.user.last_name }}</i>
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
