@@ -4,7 +4,7 @@ from django.contrib.auth.models import Group
 from django.utils import timezone
 from AffichageDynamique import settings
 CONTENT_TYPE = [
-    ('I', "Image"),
+    ('I', "Image uploadée"),
     ('U', "URL")
 ]
 
