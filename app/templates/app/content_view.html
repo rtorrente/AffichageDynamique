@@ -3,7 +3,8 @@
     <div class="row">
         <div class="col">
             <h1 class="">Flux : {{ content.feed.feed_group.name }} - {{ content.feed.name }}</h1>
-            <a href=""><button type="button" class="btn btn-warning">Editer le MA</button></a>  {% if object.adhesion_id is not None %}<button type="button" class="btn btn-success">Acceder au profil Adhésion</button>{% endif %}
+            {% if content.state != "A" %}<a href="{% url "approve_content" content.pk %}"><button type="button" class="btn btn-success">Approuver</button></a>{% endif %}
+            {% if content.state != "R" %}<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModal">Rejeter</button>{% endif %}
             <br>
         </div>
     </div>
@@ -19,9 +20,9 @@
                 <li class="list-group-item text-right"><span class="pull-left"><strong class="">Durée : </strong></span> {{ content.duration }} seconde{{ content.duration|pluralize }}</li>
                 <li class="list-group-item text-right"><span class="pull-left"><strong class="">Type : </strong></span>{{ content.content_type }}</li>
                 <li class="list-group-item text-right"><span class="pull-left"><strong class="">Statut : </strong></span><br>
-                    {% if content.state == "P" == 0 %}
+                    {% if content.state == "P" %}
                         <span class="badge badge-warning">En modération</span>
-                        {% content.state == "R" %}
+                    {% elif content.state == "R" %}
                         <span class="badge badge-danger">Refusé</span>
                     {% else %}
                         {% if content.future == 1 %}
@@ -42,4 +43,29 @@
             {% endfor %}
         </div>
     </div>
+
+    {% if content.state != "R" %}
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Rejeter le contenu</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="{% url "reject_content" content.pk %}" method="post">
+                            {% csrf_token %}
+                            <input id="id_reason" type="text" name="reason" maxlength="100" required>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary">Valider le rejet</button></form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
 {% endblock %}

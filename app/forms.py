@@ -7,3 +7,6 @@ class ContentFormImage(forms.ModelForm):
         model = Content
         exclude = ('user', 'content_type', 'content_url', 'state', 'is_valid')
 
+class RejectContentForm(forms.Form):
+    reason = forms.TextInput()
+

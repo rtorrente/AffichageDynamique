@@ -6,8 +6,9 @@ from django.views.generic import ListView
 from .models import Feed, Content, Subscription, Screen, Image
 from app import image_worker
 from django.http import HttpResponseForbidden
-from .forms import ContentFormImage
+from .forms import ContentFormImage, RejectContentForm
 from upload_validator import FileTypeValidator
+from django.shortcuts import get_object_or_404
 
 validator = FileTypeValidator(
     allowed_types=['image/jpeg', 'image/png', 'application/pdf'], allowed_extensions=['.jpg', '.jpeg', '.png', '.pdf']
@@ -51,29 +52,44 @@ class Home(ListView):
 
 
 def content_list(request, pk):
-    feed = Feed.objects.get_object_or_404(pk=pk)
+    feed = get_object_or_404(Feed, pk=pk)
     if feed.submitter_group not in request.user.groups.all() and not request.user.is_superuser and feed.moderator_group not in request.user.groups.all():
         return HttpResponseForbidden()
     content = Content.objects.filter(feed=feed).filter(is_valid=True).order_by('-end_date')
     return render(request, 'app/content_list.html', {"content": content})
 
 def content_view(request, pk):
-    content = Content.objects.get_object_or_404(pk=pk)
+    content = get_object_or_404(Content, pk=pk)
     if content.feed.submitter_group not in request.user.groups.all() and not request.user.is_superuser and content.feed.moderator_group not in request.user.groups.all():
         return HttpResponseForbidden()
     image = Image.objects.filter(content=content)
     return render(request, 'app/content_view.html', {"content": content, "images":image})
 
 def approve_content(request,pk):
-    content = Content.objects.get_object_or_404(pk=pk)
+    content = get_object_or_404(Content,pk=pk)
     if not request.user.is_superuser and content.feed.moderator_group not in request.user.groups.all(): #Modo ou SuperAd
         return HttpResponseForbidden()
     content.state='A'
     content.save()
+    #Add approved email
+    return redirect(reverse("home"))
+
+def reject_content(request, pk):
+    form = RejectContentForm(request.POST or None)
+    if form.is_valid():
+        content = get_object_or_404(Content, pk=pk)
+        if not request.user.is_superuser and content.feed.moderator_group not in request.user.groups.all():  # Modo ou SuperAd
+            return HttpResponseForbidden()
+        content.state='R'
+        content.save()
+        #Add reject email
+        return redirect(reverse("home"))
+    else:
+        return redirect(reverse("content_view", pk))
 
 def json_screen(request, pk_screen):
     json = []
-    screen = Screen.objects.get(pk=pk_screen)
+    screen = get_object_or_404(Screen,pk=pk_screen)
     urgent = Subscription.objects.filter(subscription_type="U").filter(screen=screen)
     if urgent.count()>0:
         for subscription in urgent:
