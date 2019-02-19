@@ -38,7 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'app',
-    'crispy_forms'
+    'crispy_forms',
+    'anymail',
+    'bootstrap_datepicker_plus'
 ]
 
 MIDDLEWARE = [
@@ -128,3 +130,14 @@ STATICFILES_DIRS = (
 
 MEDIA_ROOT  = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+
+
+ANYMAIL = {
+    # (exact settings here depend on your ESP...)
+    "MAILGUN_API_KEY": "",
+    "MAILGUN_SENDER_DOMAIN": 'mg.bde-insa-lyon.fr',  # your Mailgun domain, if needed
+}
+EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"  # or sendgrid.EmailBackend, or...
+DEFAULT_FROM_EMAIL = "affichage@mg.bde-insa-lyon.fr"  # if you don't already have this in settings
+
+LOGOUT_REDIRECT_URL = "/"

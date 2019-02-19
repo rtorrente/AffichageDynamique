@@ -16,15 +16,14 @@ validator = FileTypeValidator(
 
 
 def render_specific(request, template, dict={}):
-    if request.user.is_superuser:
-        count = Feed.objects.filter(content_feed__state="P").count()
-    else:
-        count = Feed.objects.filter(moderator_group__in=request.user.groups.all()).filter(content_feed__state="P").count()
+    count = Feed.objects.filter(moderator_group__in=request.user.groups.all()).filter(content_feed__state="P").count()
     dict.update({"moderate_count":count})
     return render(request, template, dict)
 
 def ContentCreateImage(request):
     form = ContentFormImage(request.POST or None)
+    if not request.user.is_superuser:
+        form.fields["feed"].queryset = Feed.objects.filter(submitter_group__in=request.user.groups.all())
     if form.is_valid():
         form.instance.user = request.user
         form.instance.content_type="I"
@@ -50,15 +49,12 @@ def ContentCreateImage(request):
         return render_specific(request, 'app/add_content.html', locals())
     #return reverse('show_member', args=(self.object.pk,))
 
-class Home(ListView):
-    model=Feed
-    def get_queryset(self):
-        if self.request.user.is_superuser:
-            return Feed.objects.order_by("feed_group")
-        else:
-            return Feed.objects.filter(submitter_group__in=self.request.user.groups.all()).order_by("feed_group")
-
-
+def home(request):
+    if request.user.is_superuser:
+        feed = Feed.objects.order_by("feed_group")
+    else:
+        feed = Feed.objects.filter(submitter_group__in=request.user.groups.all()).order_by("feed_group")
+    return render_specific(request, 'app/feed_list.html', {'feed':feed})
 
 def content_list(request, pk):
     feed = get_object_or_404(Feed, pk=pk)

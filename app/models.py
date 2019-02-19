@@ -63,15 +63,15 @@ class Subscription(models.Model):
 class Content(models.Model):
     name = models.CharField(verbose_name='Nom du contenu', blank=False, max_length=255, null=False)
     user = models.ForeignKey(User, on_delete=models.SET_DEFAULT, default=1)
-    begin_date = models.DateTimeField(blank=False, null=False)
-    end_date = models.DateTimeField(blank = False, null=False)
+    begin_date = models.DateTimeField(verbose_name="Début d'affichage", blank=False, null=False)
+    end_date = models.DateTimeField(verbose_name="Fin d'affichage", blank = False, null=False)
     submission_date = models.DateTimeField(auto_now_add=True)
     content_type = models.CharField(max_length=1, choices=CONTENT_TYPE, default='I')
     content_url = models.CharField(verbose_name='Url du contenu', blank=False, max_length=255, null=True)
     state = models.CharField(max_length=1, choices=CONTENT_STATUT, default='P')
     is_valid = models.BooleanField(null=False, default=False)
-    feed = models.ForeignKey(Feed, related_name="content_feed", blank=False, null=False, on_delete=models.CASCADE)
-    duration = models.IntegerField(verbose_name="Durée")
+    feed = models.ForeignKey(Feed, verbose_name="Flux d'affichage", related_name="content_feed", blank=False, null=False, on_delete=models.CASCADE)
+    duration = models.IntegerField(verbose_name="Durée d'apparition à l'écran")
     def __str__(self):
         return self.name
     @property
@@ -84,7 +84,7 @@ class Content(models.Model):
         return d > self.end_date
     @property
     def active(self):
-        if self.state == 1 and not self.future and not self.past:
+        if self.state == 'A' and not self.future and not self.past:
             return True
         else:
             return False
