@@ -25,7 +25,8 @@ class FeedGroup(models.Model):
 
 class Feed(models.Model):
     name = models.CharField(verbose_name='Nom du flux', blank=False, max_length=255, null=False)
-    submitter_group = models.ForeignKey(Group, on_delete=models.SET_DEFAULT, default=1)
+    submitter_group = models.ForeignKey(Group, on_delete=models.SET_DEFAULT, default=1, related_name="feed_submitter")
+    moderator_group = models.ForeignKey(Group, on_delete=models.SET_DEFAULT, default=1, related_name="feed_moderator")
     feed_group = models.ForeignKey(FeedGroup, on_delete=models.PROTECT, null=True, blank=True)
     def __str__(self):
         return self.feed_group.name + " - " + self.name
@@ -63,7 +64,8 @@ class Content(models.Model):
     content_type = models.CharField(max_length=1, choices=CONTENT_TYPE, default='I')
     content_url = models.CharField(verbose_name='Url du contenu', blank=False, max_length=255, null=True)
     state = models.BooleanField(null=False, default=False)
-    feed = models.ManyToManyField(Feed, related_name="content_feed", blank=False)
+    is_valid = models.BooleanField(null=False, default=False)
+    feed = models.ForeignKey(Feed, related_name="content_feed", blank=False, null=False, on_delete=models.CASCADE)
     duration = models.IntegerField(verbose_name="Durée")
     def __str__(self):
         return self.name
@@ -85,7 +87,7 @@ class Content(models.Model):
     def get_first_content_url(self):
         image = self.images.first()
         if image is not None:
-            return settings.MEDIA_URL + str(image.image)
+            return image.get_image_url
         else:
             return "no_image"
 
@@ -95,3 +97,6 @@ class Image(models.Model):
     content = models.ForeignKey(Content, related_name="images", on_delete=models.CASCADE)
     def __str__(self):
         return self.content.name + " - Image id " + str(self.pk)
+    @property
+    def get_image_url(self):
+        return settings.MEDIA_URL + str(self.image)

@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from AffichageDynamique import settings
 from django.urls import reverse
 from django.views.generic import ListView
-from .models import Feed, Content, Subscription, Screen
+from .models import Feed, Content, Subscription, Screen, Image
 from app import image_worker
 from django.http import HttpResponseForbidden
 from .forms import ContentFormImage
@@ -30,6 +30,10 @@ def ContentCreateImage(request):
             image_worker.convert_pdf_to_img(tmp_url, content)
         else:
             image_worker.resize_img(tmp_url, content)
+        if content.feed.moderator_group in request.user.groups.all() or request.user.is_superuser: #Si l'utilisateur est modérateur ou admin on modére directement
+            content.state=True
+        content.is_valid=True
+        content.save()
         return render(request, 'app/add_content.html', locals())
         #return redirect(reverse("home"))
     else:
@@ -48,12 +52,17 @@ class Home(ListView):
 
 def content_list(request, pk):
     feed = Feed.objects.get(pk=pk)
-    if feed.submitter_group not in request.user.groups.all() and not request.user.is_superuser:
+    if feed.submitter_group not in request.user.groups.all() and not request.user.is_superuser and feed.moderator_group not in request.user.groups.all():
         return HttpResponseForbidden()
-    content = Content.objects.filter(feed=feed).order_by('-end_date')
+    content = Content.objects.filter(feed=feed).filter(is_valid=True).order_by('-end_date')
     return render(request, 'app/content_list.html', {"content": content})
 
-
+def content_view(request, pk):
+    content = Content.objects.get(pk=pk)
+    if content.feed.submitter_group not in request.user.groups.all() and not request.user.is_superuser and content.feed.moderator_group not in request.user.groups.all():
+        return HttpResponseForbidden()
+    image = Image.objects.filter(content=content)
+    return render(request, 'app/content_view.html', {"content": content, "images":image})
 
 def json_screen(request, pk_screen):
     json = []

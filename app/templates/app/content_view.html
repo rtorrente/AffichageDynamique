@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block content %}
+        <div class="row">
+        <div class="col">
+            <h1 class="">Flux : {{ content.feed.feed_group.name }} - {{ content.feed.name }}</h1>
+            <a href=""><button type="button" class="btn btn-warning">Editer le MA</button></a>  {% if object.adhesion_id is not None %}<button type="button" class="btn btn-success">Acceder au profil Adhésion</button>{% endif %}
+            <br>
+        </div>
+    </div>
+  <br>
+    <div class="row">
+        <div class="col-sm-3">
+            <!--left col-->
+            <ul class="list-group">
+                <li class="list-group-item text-muted" contenteditable="false">Détails</li>
+                <li class="list-group-item text-right"><span class="pull-left"><strong class="">Titre: </strong></span><br> {{ content.name }}</li>
+                <li class="list-group-item text-right"><span class="pull-left"><strong class="">Utilisateur : </strong></span><br> {{ content.user.first_name }} {{ content.user.last_name }}<br/>{{ content.user.email }}</li>
+                <li class="list-group-item text-right"><span class="pull-left"><strong class="">Dates : </strong></span> {{ content.begin_date }} - {{ content.end_date }}</li>
+                <li class="list-group-item text-right"><span class="pull-left"><strong class="">Durée : </strong></span> {{ content.duration }} seconde{{ content.duration|pluralize }}</li>
+                <li class="list-group-item text-right"><span class="pull-left"><strong class="">Type : </strong></span>{{ content.content_type }}</li>
+                <li class="list-group-item text-right"><span class="pull-left"><strong class="">Statut : </strong></span><br> {% if content.state == 0 %}
+                            <span class="badge badge-warning">En modération</span>
+                        {% else %}
+                            {% if content.future == 1 %}
+                                <span class="badge badge-info">Programmé</span>
+                            {% elif content.past == 1 %}
+                                <span class="badge badge-dark">Expiré</span>
+                            {% else %}
+                                <span class="badge badge-success">En diffusion</span>
+                            {% endif %}
+                        {% endif %}</li>
+                <li class="list-group-item text-right"><span class="pull-left"><strong class="">Nombre image{{ images.count|pluralize }} : </strong></span> {{ images.count }}</li>
+            </ul>
+        </div>
+        <!--/col-3-->
+        <div class="col-sm-9" style="" contenteditable="false">
+            {% for image in images %}
+                <img src="{{ image.get_image_url }}" style="max-width: 100%; max-height: auto"> <br/>
+            {% endfor %}
+        </div>
+
+    </div>
+
+
+
+
+
+
+   {% comment %} <div class="alert alert-primary" role="alert">
+  {{ content.count }} élément{{ content.count |pluralize }} dans ce flux
+</div>
+    <ul class="list-unstyled">
+        {% for content_detail in content %}
+            <li class="media my-4">
+                <div style="width: 220px; height: 112.25px; text-align: center"><img src="{{ content_detail.get_first_content_url }}" style="max-height: 112.25px; max-width: 200px" class="mr-3" alt="..."></div>
+                <div class="media-body">
+                    <h5 class="mt-0 mb-1"><a href="">{{ content_detail.name }}</a>
+                        {% if content_detail.state == 0 %}
+                            <span class="badge badge-warning">En modération</span>
+                        {% else %}
+                            {% if content_detail.future == 1 %}
+                                <span class="badge badge-info">Programmé</span>
+                            {% elif content_detail.past == 1 %}
+                                <span class="badge badge-dark">Expiré</span>
+                            {% else %}
+                                <span class="badge badge-success">En diffusion</span>
+                            {% endif %}
+                        {% endif %}</h5>
+                    <i class="far fa-calendar-alt"> {{ content_detail.begin_date }} - {{ content_detail.end_date }}</i><br/>
+                    <i class="far fa-hourglass"> {{ content_detail.duration }} seconde{{ content_detail.duration|pluralize }}</i><br/>
+                    <i class="far fa-user"> {{ content_detail.user.first_name }} {{ content_detail.user.last_name }}</i>
+                </div>
+            </li>
+        {% endfor %}
+    </ul>{% endcomment %}
+{% endblock %}
