@@ -1,3 +1,32 @@
-<iframe id="ytplayer" type="text/html" width="1920" height="1080"
+<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script>// With the element initially shown, we can dim it slowly:
+    function parcourir_json(json) {
+        console.log(json)
+        $("#content1").html('<img src="http://127.0.0.1:8000/media/contents/FileUpload_SSuiORO.png">')
+        $("#content1").html('<img src="http://127.0.0.1:8000/media/contents/FileUpload_SSuiORO.png">')
+                $("#content1").show()
+        for (var content in json.data){
+            console.log(content)
+
+
+
+        }
+
+    }
+    var json = $.getJSON( "http://127.0.0.1:8000/json_screen/1")
+  .done(function() {
+    console.log( "second success" );
+    parcourir_json(json);
+  })
+  .fail(function() {
+    console.log( "error" );
+  });
+
+    </script>
+
+<div id="content1" style="display: block"></div>
+<div id="content2" style="display:None"></div>
+
+{% comment %}<iframe id="ytplayer" type="text/html" width="1920" height="1080"
 src="https://www.youtube.com/embed/HLnfVK4qBtI?autoplay=1&controls=0&disablekb=1&fs=0&modestbranding=1&iv_load_policy=3&showinfo=0"
-frameborder="0" allowfullscreen>
+frameborder="0" allowfullscreen>{% endcomment %}

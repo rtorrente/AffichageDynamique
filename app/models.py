@@ -5,7 +5,8 @@ from django.utils import timezone
 from AffichageDynamique import settings
 CONTENT_TYPE = [
     ('I', "Image uploadée"),
-    ('U', "URL")
+    ('U', "URL"),
+    ('Y', "Youtube")
 ]
 
 CONTENT_STATUT = [

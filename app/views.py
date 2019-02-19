@@ -121,6 +121,9 @@ def json_screen(request, pk_screen):
                         for img1 in image1:
                             image = {'type': 'image', 'content': str(img1.image), 'duration': int(img.duration/image1.count())}
                             json.append(image)
+                    elif img.content_type=="Y":
+                        image = {'type': 'youtube', 'content': img.content_url, 'duration': int(img.duration)}
+                        json.append(image)
     else:
         subscription1 = Subscription.objects.filter(subscription_type="N").filter(screen=screen)
         for sub in subscription1:
@@ -133,4 +136,11 @@ def json_screen(request, pk_screen):
                         for img1 in image1:
                             image = {'type': 'image', 'content': str(img1.image), 'duration': int(img.duration/image1.count())}
                             json.append(image)
+                    elif img.content_type=="Y":
+                        image = {'type': 'youtube', 'content': img.content_url, 'duration': int(img.duration)}
+                        json.append(image)
     return JsonResponse(json,safe=False)
+
+def display(request, pk):
+    screen = get_object_or_404(Screen, pk=pk)
+    return render(request, 'app/display.html', {"pk": screen.pk})
