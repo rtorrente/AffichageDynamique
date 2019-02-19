@@ -2,7 +2,7 @@ FROM python:3.6
 EXPOSE 8000
 
 
-RUN apt-get update && apt-get install -y ghostscript freetype imagemagick libfreetype6
+RUN apt-get update && apt-get install -y ghostscript imagemagick libfreetype6
 
 WORKDIR /app
 
