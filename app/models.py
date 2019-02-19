@@ -83,7 +83,12 @@ class Content(models.Model):
             return False
     @property
     def get_first_content_url(self):
-        return settings.MEDIA_URL + str(self.images.first().image)
+        image = self.images.first()
+        if image is not None:
+            return settings.MEDIA_URL + str(image.image)
+        else:
+            return "no_image"
+
 
 class Image(models.Model):
     image = models.ImageField(upload_to='contents')

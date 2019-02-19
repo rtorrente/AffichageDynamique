@@ -19,3 +19,18 @@ def convert_pdf_to_img(file1, content):
             picture.image.save(name="FileUpload.png", content=stream_out)
             picture.save()
     os.remove(file1)
+
+def resize_img(file1, content):
+    img = Image(filename=file1)
+    if(img.width>1920):
+        img.sample(width=1920)
+    if(img.height>1080):
+        img.sample(height=1080)
+    img.format = "png"
+    stream_out = six.BytesIO()
+    img.save(file=stream_out)
+    picture = ImageModel()
+    picture.content = content
+    picture.image.save(name="FileUpload.png", content=stream_out)
+    picture.save()
+    os.remove(file1)
