@@ -3,7 +3,6 @@ from wand.image import Image
 from django.utils import six
 import os
 from .models import Image as ImageModel
-from AffichageDynamique import settings
 
 def convert_pdf_to_img(file1, content):
     size = '_' + str(1920) + 'x' + str(1080) + 'px'
@@ -37,15 +36,3 @@ def resize_img(file1, content):
     picture.image.save(name="FileUpload.png", content=stream_out)
     picture.save()
     os.remove(file1)
-
-def delete_image_orphan():
-    list = os.listdir(settings.MEDIA_ROOT + "/contents")
-    image = ImageModel.objects.all()
-    imagelist=[]
-    for img in image:
-        string = img.image.name
-        imagelist.append(string.replace("contents/", ""))
-    for img in list:
-        if img not in imagelist:
-            print (settings.MEDIA_ROOT + "/contents/"+img)
-            os.remove(settings.MEDIA_ROOT + "/contents/"+img)

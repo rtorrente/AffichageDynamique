@@ -51,18 +51,25 @@ class Home(ListView):
 
 
 def content_list(request, pk):
-    feed = Feed.objects.get(pk=pk)
+    feed = Feed.objects.get_object_or_404(pk=pk)
     if feed.submitter_group not in request.user.groups.all() and not request.user.is_superuser and feed.moderator_group not in request.user.groups.all():
         return HttpResponseForbidden()
     content = Content.objects.filter(feed=feed).filter(is_valid=True).order_by('-end_date')
     return render(request, 'app/content_list.html', {"content": content})
 
 def content_view(request, pk):
-    content = Content.objects.get(pk=pk)
+    content = Content.objects.get_object_or_404(pk=pk)
     if content.feed.submitter_group not in request.user.groups.all() and not request.user.is_superuser and content.feed.moderator_group not in request.user.groups.all():
         return HttpResponseForbidden()
     image = Image.objects.filter(content=content)
     return render(request, 'app/content_view.html', {"content": content, "images":image})
+
+def approve_content(request,pk):
+    content = Content.objects.get_object_or_404(pk=pk)
+    if not request.user.is_superuser and content.feed.moderator_group not in request.user.groups.all(): #Modo ou SuperAd
+        return HttpResponseForbidden()
+    content.state='A'
+    content.save()
 
 def json_screen(request, pk_screen):
     json = []

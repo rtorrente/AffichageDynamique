@@ -8,6 +8,12 @@ CONTENT_TYPE = [
     ('U', "URL")
 ]
 
+CONTENT_STATUT = [
+    ('P', "En attente"),
+    ('A', "Approuvé"),
+    ('R', "Rejeté")
+]
+
 SUBSCRIPTION_TYPE = [
     ('N', "Normal"),
     ('U', "Urgent")
@@ -17,7 +23,6 @@ SUBSCRIPTION_TYPE = [
 
 class FeedGroup(models.Model):
     name = models.CharField(verbose_name='Nom du groupe de flux', blank=False, max_length=255, null=False)
-    owner_group = models.ForeignKey(Group, on_delete=models.SET_DEFAULT, default=1)
     def __str__(self):
         return self.name
     def count_feed(self, group):
@@ -63,7 +68,7 @@ class Content(models.Model):
     submission_date = models.DateTimeField(auto_now_add=True)
     content_type = models.CharField(max_length=1, choices=CONTENT_TYPE, default='I')
     content_url = models.CharField(verbose_name='Url du contenu', blank=False, max_length=255, null=True)
-    state = models.BooleanField(null=False, default=False)
+    state = models.CharField(max_length=1, choices=CONTENT_STATUT, default='P')
     is_valid = models.BooleanField(null=False, default=False)
     feed = models.ForeignKey(Feed, related_name="content_feed", blank=False, null=False, on_delete=models.CASCADE)
     duration = models.IntegerField(verbose_name="Durée")

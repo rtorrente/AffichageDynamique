@@ -9,8 +9,10 @@
                 <div style="width: 220px; height: 112.25px; text-align: center"><img src="{{ content_detail.get_first_content_url }}" style="max-height: 112.25px; max-width: 200px" class="mr-3" alt="..."></div>
                 <div class="media-body">
                     <h5 class="mt-0 mb-1"><a href="{% url "content_view" content_detail.pk %}">{{ content_detail.name }}</a>
-                        {% if content_detail.state == 0 %}
+                        {% if content_detail.state == "P" %}
                             <span class="badge badge-warning">En modération</span>
+                        {% elif content_detail.state == "R" %}
+                            <span class="badge badge-danger">Refusé</span>
                         {% else %}
                             {% if content_detail.future == 1 %}
                                 <span class="badge badge-info">Programmé</span>
