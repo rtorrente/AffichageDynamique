@@ -14,6 +14,15 @@ validator = FileTypeValidator(
     allowed_types=['image/jpeg', 'image/png', 'application/pdf'], allowed_extensions=['.jpg', '.jpeg', '.png', '.pdf']
 )
 
+
+def render_specific(request, template, dict={}):
+    if request.user.is_superuser:
+        count = Feed.objects.filter(content_feed__state="P").count()
+    else:
+        count = Feed.objects.filter(moderator_group__in=request.user.groups.all()).filter(content_feed__state="P").count()
+    dict.update({"moderate_count":count})
+    return render(request, template, dict)
+
 def ContentCreateImage(request):
     form = ContentFormImage(request.POST or None)
     if form.is_valid():
@@ -35,10 +44,10 @@ def ContentCreateImage(request):
             content.state=True
         content.is_valid=True
         content.save()
-        return render(request, 'app/add_content.html', locals())
+        return render_specific(request, 'app/add_content.html', locals())
         #return redirect(reverse("home"))
     else:
-        return render(request, 'app/add_content.html', locals())
+        return render_specific(request, 'app/add_content.html', locals())
     #return reverse('show_member', args=(self.object.pk,))
 
 class Home(ListView):
@@ -56,14 +65,28 @@ def content_list(request, pk):
     if feed.submitter_group not in request.user.groups.all() and not request.user.is_superuser and feed.moderator_group not in request.user.groups.all():
         return HttpResponseForbidden()
     content = Content.objects.filter(feed=feed).filter(is_valid=True).order_by('-end_date')
-    return render(request, 'app/content_list.html', {"content": content})
+    return render_specific(request, 'app/content_list.html', {"content": content})
+
+def content_list_moderate(request, pk):
+    feed = get_object_or_404(Feed, pk=pk)
+    if feed.submitter_group not in request.user.groups.all() and not request.user.is_superuser and feed.moderator_group not in request.user.groups.all():
+        return HttpResponseForbidden()
+    content = Content.objects.filter(feed=feed).filter(is_valid=True).filter(state="P").order_by('begin_date')
+    return render_specific(request, 'app/content_list.html', {"content": content})
+
+def moderation_home(request):
+    if request.user.is_superuser:
+        feed = Feed.objects.filter(content_feed__state="P")
+    else:
+        feed = Feed.objects.filter(content_feed__state="P").filter(moderator_group__in=request.user.groups.all())
+    return render_specific(request, 'app/moderation_home.html', {"feed": feed})
 
 def content_view(request, pk):
     content = get_object_or_404(Content, pk=pk)
     if content.feed.submitter_group not in request.user.groups.all() and not request.user.is_superuser and content.feed.moderator_group not in request.user.groups.all():
         return HttpResponseForbidden()
     image = Image.objects.filter(content=content)
-    return render(request, 'app/content_view.html', {"content": content, "images":image})
+    return render_specific(request, 'app/content_view.html', {"content": content, "images":image})
 
 def approve_content(request,pk):
     content = get_object_or_404(Content,pk=pk)
@@ -72,7 +95,7 @@ def approve_content(request,pk):
     content.state='A'
     content.save()
     #Add approved email
-    return redirect(reverse("home"))
+    return redirect(reverse("content_list_moderate", args=[content.feed.pk]))
 
 def reject_content(request, pk):
     form = RejectContentForm(request.POST or None)
@@ -83,9 +106,9 @@ def reject_content(request, pk):
         content.state='R'
         content.save()
         #Add reject email
-        return redirect(reverse("home"))
+        return redirect(reverse("content_list_moderate", args=[content.feed.pk]))
     else:
-        return redirect(reverse("content_view", pk))
+        return redirect(reverse("content_view", args=[pk]))
 
 def json_screen(request, pk_screen):
     json = []

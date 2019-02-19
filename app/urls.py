@@ -6,6 +6,8 @@ from django.contrib.auth.decorators import login_required
 urlpatterns = [
     path('', login_required(views.Home.as_view()), name='home'),
     path('list_content/<int:pk>', views.content_list, name='content_list'),
+    path('list_content_moderate/<int:pk>', views.content_list_moderate, name='content_list_moderate'),
+    path('moderation_home/', views.moderation_home, name='moderation_home'),
     path('view_content/<int:pk>', views.content_view, name='content_view'),
     path('approve_content/<int:pk>', views.approve_content, name='approve_content'),
     path('reject_content/<int:pk>', views.reject_content, name='reject_content'),
