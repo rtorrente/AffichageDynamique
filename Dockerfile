@@ -4,7 +4,8 @@ EXPOSE 8000
 RUN apt-get update && apt-get install -y ghostscript imagemagick libfreetype6
 
 WORKDIR /app
-
+RUN mkdir tmp
+RUN mkdir media/contents
 COPY requirements.txt /app
 RUN pip3 install -r requirements.txt
 COPY . /app
