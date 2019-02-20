@@ -7,8 +7,8 @@ WORKDIR /app
 COPY requirements.txt /app
 RUN pip3 install -r requirements.txt
 COPY . /app
-RUN mkdir tmp
-RUN mkdir media/contents
+RUN mkdir /app/tmp
+RUN mkdir /app/media/contents
 ENV DATABASE_URL postgres://ad@db/ad
 ENV SECRET_KEY ''
 ENV DJANGO_ENV 'dev'
