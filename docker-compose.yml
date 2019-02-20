@@ -1,4 +1,8 @@
 version: '2'
+volumes:
+  affichageDynamique-database:
+  affichageDynamique-staticfiles:
+  affichageDynamique-media:
 services:
   affichageDynamique-assets:
     image: rtorrente65/django_nginx_proxy
