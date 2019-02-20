@@ -16,7 +16,7 @@ validator = FileTypeValidator(
 
 
 def render_specific(request, template, dict={}):
-    count = Feed.objects.filter(moderator_group__in=request.user.groups.all()).filter(content_feed__state="P").count()
+    count = Feed.objects.filter(moderator_group__in=request.user.groups.all()).filter(content_feed__state="P").filter(content_feed__is_valid=True).count()
     dict.update({"moderate_count":count})
     return render(request, template, dict)
 
@@ -40,7 +40,7 @@ def ContentCreateImage(request):
         else:
             image_worker.resize_img(tmp_url, content)
         if content.feed.moderator_group in request.user.groups.all() or request.user.is_superuser: #Si l'utilisateur est modérateur ou admin on modére directement
-            content.state=True
+            content.state="A"
         content.is_valid=True
         content.save()
         return render_specific(request, 'app/add_content.html', locals())
