@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
+import dj_database_url
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -20,12 +21,17 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'o1(en$lqa0@k*#we79=ooqpuk#%wzqgj2qk!^t43pxdu(=^w_8'
+SECRET_KEY = os.getenv('SECRET_KEY', 'o1(en$lqa0@k*#we79=ooqpuk#%wzqgj2qk!^t43pxdu(=^w_8')
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DJANGO_ENV', 'dev') == 'dev'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['affichage.bde-insa-lyon.fr']
+if DEBUG:
+    ALLOWED_HOSTS.extend(['127.0.0.1'])
+    ALLOWED_HOSTS.extend(['localhost'])
+    ALLOWED_HOSTS.extend(['affichage-new.bde-insa-lyon.fr'])
 
 
 # Application definition
@@ -79,12 +85,8 @@ WSGI_APPLICATION = 'AffichageDynamique.wsgi.application'
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
+    'default': dj_database_url.config(default='sqlite:///' + os.path.join(BASE_DIR, 'db.sqlite3'), conn_max_age=600)
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
@@ -130,14 +132,14 @@ STATICFILES_DIRS = (
 
 MEDIA_ROOT  = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
-
+EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
+LOGOUT_REDIRECT_URL = "/"
 
 ANYMAIL = {
     # (exact settings here depend on your ESP...)
-    "MAILGUN_API_KEY": "",
-    "MAILGUN_SENDER_DOMAIN": 'mg.bde-insa-lyon.fr',  # your Mailgun domain, if needed
+    "MAILGUN_API_KEY": os.getenv('MAILGUN_KEY',""),
+    "MAILGUN_SENDER_DOMAIN": os.getenv('MAILGUN_DOMAIN', 'mg.bde-insa-lyon.fr'),  # your Mailgun domain, if needed
 }
-EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"  # or sendgrid.EmailBackend, or...
-DEFAULT_FROM_EMAIL = "affichage@mg.bde-insa-lyon.fr"  # if you don't already have this in settings
 
-LOGOUT_REDIRECT_URL = "/"
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL',"affichage@mg.bde-insa-lyon.fr")
+
