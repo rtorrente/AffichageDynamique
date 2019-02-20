@@ -1,0 +1,38 @@
+version: '2'
+services:
+  affichageDynamique-assets:
+    image: rtorrente65/django_nginx_proxy
+    volumes:
+    - affichageDynamique-media:/app/media
+    - affichageDynamique-staticfiles:/app/staticfiles
+    ports:
+    - 80:80
+    depends_on:
+    - affichageDynamique-app
+    links:
+    - "affichageDynamique-app:app"
+  affichageDynamique-app:
+    image: bdeinsalyon/affichage_dynamique
+    environment:
+      DATABASE_URL: postgres://ad@affichageDynamique-db/ad
+      SECRET_KEY: 9!zDg;>jl.YW1'|>j/M*YgkC}iEeSGbXMB{`Z)N>x^V:u>EB_]}`u)]=29W*;
+      DJANGO_ENV: dev
+      MAILGUN_KEY: key-fae76d3efae2c7d3816c2228a17974b2
+      MAILGUN_DOMAIN: mg.bde-insa-lyon.fr
+      DEFAULT_FROM_EMAIL: affichage@mg.bde-insa-lyon.fr
+    stdin_open: true
+    expose:
+    - "8000"
+    volumes:
+    - affichageDynamique-staticfiles:/app/staticfiles
+    - affichageDynamique-media:/app/media
+    tty: true
+    depends_on:
+    - affichageDynamique-db
+  affichageDynamique-db:
+    image: postgres:10
+    environment:
+      POSTGRES_USER: ad
+      POSTGRES_DB: ad
+    volumes:
+    - postgres_data:/var/lib/postgresql/data/
