@@ -39,4 +39,4 @@ services:
       POSTGRES_USER: ad
       POSTGRES_DB: ad
     volumes:
-    - postgres_data:/var/lib/postgresql/data/
+    - affichageDynamique-database:/var/lib/postgresql/data/
