@@ -1,5 +1,6 @@
 from PyPDF2 import PdfFileReader
 from wand.image import Image
+from wand.color import Color
 from django.utils import six
 import os
 from .models import Image as ImageModel
@@ -14,6 +15,7 @@ def convert_pdf_to_img(file1, content):
             if (img.height > 1080):
                 img.sample(height=1080)
             img.format = "png"
+            img.background_color = Color('#ffffff')
             stream_out = six.BytesIO()
             img.save(file=stream_out)
             picture = ImageModel()

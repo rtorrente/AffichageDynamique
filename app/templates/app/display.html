@@ -1,32 +1,73 @@
+<style type="text/css">
+    body {margin: 0;
+        padding: 0;
+        height: 100%;
+        background-color: black;
+        overflow: hidden; }
+</style>
 <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
-    <script>// With the element initially shown, we can dim it slowly:
-    function parcourir_json(json) {
-        console.log(json)
-        $("#content1").html('<img src="http://127.0.0.1:8000/media/contents/FileUpload_SSuiORO.png">')
-        $("#content1").html('<img src="http://127.0.0.1:8000/media/contents/FileUpload_SSuiORO.png">')
-                $("#content1").show()
-        for (var content in json.data){
-            console.log(content)
-
-
-
-        }
-
+<script>
+    var json_actuel={};
+    var json_new={};
+    var content_number=0;
+    function copy(src) {
+        return JSON.parse(JSON.stringify(src));
     }
-    var json = $.getJSON( "http://127.0.0.1:8000/json_screen/1")
-  .done(function() {
-    console.log( "second success" );
-    parcourir_json(json);
-  })
-  .fail(function() {
-    console.log( "error" );
-  });
 
-    </script>
-
-<div id="content1" style="display: block"></div>
-<div id="content2" style="display:None"></div>
-
-{% comment %}<iframe id="ytplayer" type="text/html" width="1920" height="1080"
-src="https://www.youtube.com/embed/HLnfVK4qBtI?autoplay=1&controls=0&disablekb=1&fs=0&modestbranding=1&iv_load_policy=3&showinfo=0"
-frameborder="0" allowfullscreen>{% endcomment %}
+    function next_content() {
+        console.log("Call_next_content_function")
+        console.log(json_actuel[content_number].type)
+        $("#content1").fadeOut("slow", end_fadeOut);
+        function end_fadeOut(){
+            if (json_actuel[content_number].type==="image") {
+                $("#content1").html('<img style="max-height: 100%; max-width: 100%" src="{{ media }}'+json_actuel[content_number].content+'">')
+            }
+            else if(json_actuel[content_number].type==="youtube"){
+                $("#content1").html('<iframe id="ytplayer" type="text/html" width="{{ screen.width }}" height="{{ screen.height }}"\n' +
+                    'src="https://www.youtube.com/embed/HLnfVK4qBtI?autoplay=1&controls=0&disablekb=1&fs=0&modestbranding=1&iv_load_policy=3&showinfo=0"\n' +
+                    'frameborder="0" allowfullscreen>')
+            }
+            $("#content1").fadeIn("slow", end_fadeIn);
+        }
+        function end_fadeIn(){
+            setTimeout(next_content, json_actuel[content_number].duration*1000);
+            content_number++;
+            if(content_number===json_actuel.length){
+                console.log("fin de parsage d'une liste")
+                content_number=0;
+                if(json_new.length>0){
+                    json_actuel=copy(json_new);
+                }
+            }
+        }
+    }
+    function download(){
+        console.log("Call_download_function")
+        var json = $.getJSON("{% url "json_screen" screen.pk %}")
+            .done(function(data) {
+                console.log("Bien recu")
+                json_new = copy(data);
+            })
+            .fail(function() {
+                console.log( "error" );
+            });
+        setTimeout(download, 30*1000);
+    }
+    function start(){
+        console.log("Call_start_function")
+        if (json_new.length>0){
+            console.log("content_ok");
+            json_actuel = copy(json_new);
+            next_content();
+        }
+        else{
+            console.log("no content");
+            setTimeout(start, 30*1000);
+        }
+    }
+    download(); //Attention ne pas mettre dans start sinon double appel si start échoue une fois
+    start();
+</script>
+<div style="height: {{ screen.height }}; width: {{ screen.width }}; display: table-cell; vertical-align: middle; text-align: center">
+    <div id="content1"></div>
+</div>
