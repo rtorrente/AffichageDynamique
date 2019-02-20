@@ -13,9 +13,9 @@ def convert_pdf_to_img(file1, content):
     for i in range(input_file.getNumPages()):
         with Image(filename = file1 + '[' + str(i) + ']') as img:
             if (img.width > 1920):
-                img.sample(width=1920)
+                img.resize(width=1920)
             if (img.height > 1080):
-                img.sample(height=1080)
+                img.resize(height=1080)
             img.format = "png"
             img.background_color = Color('#ffffff')
             stream_out = six.BytesIO()
@@ -29,9 +29,9 @@ def convert_pdf_to_img(file1, content):
 def resize_img(file1, content):
     img = Image(filename=file1)
     if(img.width>1920):
-        img.sample(width=1920)
+        img.resize(width=1920)
     if(img.height>1080):
-        img.sample(height=1080)
+        img.resize(height=1080)
     img.format = "png"
     stream_out = six.BytesIO()
     img.save(file=stream_out)
