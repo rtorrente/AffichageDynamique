@@ -106,9 +106,9 @@ def reject_content(request, pk):
     else:
         return redirect(reverse("content_view", args=[pk]))
 
-def json_screen(request, pk_screen):
+def json_screen(request, token_screen):
     json = []
-    screen = get_object_or_404(Screen,pk=pk_screen)
+    screen = get_object_or_404(Screen,token=token_screen)
     urgent = Subscription.objects.filter(subscription_type="U").filter(screen=screen)
     if urgent.count()>0:
         for subscription in urgent:
@@ -139,8 +139,11 @@ def json_screen(request, pk_screen):
                     elif img.content_type=="Y":
                         image = {'type': 'youtube', 'content': img.content_url, 'duration': int(img.duration)}
                         json.append(image)
+                    elif img.content_type=="U":
+                        image = {'type': 'iframe', 'content': img.content_url, 'duration': int(img.duration)}
+                        json.append(image)
     return JsonResponse(json,safe=False)
 
-def display(request, pk):
-    screen = get_object_or_404(Screen, pk=pk)
+def display(request, token_screen):
+    screen = get_object_or_404(Screen, token=token_screen)
     return render(request, 'app/display.html', {"screen": screen, "media":settings.MEDIA_URL, "static":settings.STATIC_URL})

@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
 from django.utils import timezone
 from AffichageDynamique import settings
+import uuid
 CONTENT_TYPE = [
     ('I', "Image uploadée"),
     ('U', "URL"),
@@ -47,11 +48,19 @@ class Feed(models.Model):
 
 
 class Screen(models.Model):
+    token = models.UUIDField(unique=True, default=uuid.uuid4, editable=False)
     name = models.CharField(verbose_name="Nom de l'écran", blank=False, max_length=255, null=False)
     place = models.CharField(verbose_name="Lieu de l'écran", blank=False, max_length=255, null=False)
     owner_group = models.ForeignKey(Group, on_delete=models.SET_DEFAULT, default=1)
     width = models.IntegerField(null=False, blank=False)
     height = models.IntegerField(null=False, blank=False)
+    date_last_call = models.DateTimeField(auto_now_add=True)
+    temperature = models.FloatField(blank=True, null=True)
+    load = models.CharField(max_length=16, blank=True, null=True)
+    fs_ro = models.BooleanField(default=False)
+    tv_screen_on = models.BooleanField(default=False)
+    hostname=models.CharField(blank=True, null=True, max_length=50)
+    ip = models.GenericIPAddressField(blank=True, null=True)
     def __str__(self):
         return self.name
 

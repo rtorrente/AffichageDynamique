@@ -24,7 +24,12 @@
             }
             else if(json_actuel[content_number].type==="youtube"){
                 $("#content1").html('<iframe id="ytplayer" type="text/html" width="{{ screen.width }}" height="{{ screen.height }}"\n' +
-                    'src="https://www.youtube.com/embed/HLnfVK4qBtI?autoplay=1&controls=0&disablekb=1&fs=0&modestbranding=1&iv_load_policy=3&showinfo=0"\n' +
+                    'src="https://www.youtube.com/embed/'+ json_actuel[content_number].content + '?autoplay=1&controls=0&disablekb=1&fs=0&modestbranding=1&iv_load_policy=3&showinfo=0"\n' +
+                    'frameborder="0" allowfullscreen>')
+            }
+            else if(json_actuel[content_number].type==="iframe"){
+                $("#content1").html('<iframe type="text/html" width="{{ screen.width }}" height="{{ screen.height }}"\n' +
+                    'src="'+ json_actuel[content_number].content + '"\n' +
                     'frameborder="0" allowfullscreen>')
             }
             $("#content1").fadeIn("slow", end_fadeIn);
@@ -43,7 +48,7 @@
     }
     function download(){
         console.log("Call_download_function")
-        var json = $.getJSON("{% url "json_screen" screen.pk %}")
+        var json = $.getJSON("{% url "json_screen" screen.token %}")
             .done(function(data) {
                 console.log("Bien recu")
                 json_new = copy(data);
