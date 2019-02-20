@@ -18,7 +18,7 @@ services:
   affichageDynamique-app:
     image: bdeinsalyon/affichage_dynamique
     environment:
-      DATABASE_URL: postgres://ad@affichageDynamique-db/ad
+      DATABASE_URL: postgres://ad@db/ad
       SECRET_KEY: 9!zDg;>jl.YW1'|>j/M*YgkC}iEeSGbXMB{`Z)N>x^V:u>EB_]}`u)]=29W*;
       DJANGO_ENV: dev
       MAILGUN_KEY: key-fae76d3efae2c7d3816c2228a17974b2
@@ -33,6 +33,8 @@ services:
     tty: true
     depends_on:
     - affichageDynamique-db
+    links:
+    - "affichageDynamique-db:db"
   affichageDynamique-db:
     image: postgres:10
     environment:
