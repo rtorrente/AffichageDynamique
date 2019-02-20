@@ -1,21 +1,22 @@
-from django.shortcuts import render, redirect
-from django.http import JsonResponse
-from AffichageDynamique import settings
-from django.urls import reverse
-from django.views.generic import ListView
-from .models import Feed, Content, Subscription, Screen, Image
-from app import image_worker
 from django.http import HttpResponseForbidden
-from .forms import ContentFormImage, RejectContentForm
-from upload_validator import FileTypeValidator
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
+from django.shortcuts import render, redirect
+from django.urls import reverse
+from django.utils import timezone
+from upload_validator import FileTypeValidator
+
+from AffichageDynamique import settings
+from app import image_worker
+from .forms import ContentFormImage, RejectContentForm
+from .models import Feed, Content, Subscription, Screen, Image
 
 validator = FileTypeValidator(
     allowed_types=['image/jpeg', 'image/png', 'application/pdf'], allowed_extensions=['.jpg', '.jpeg', '.png', '.pdf']
 )
 
 
-def render_specific(request, template, dict={}):
+def render_specific(request, template, dict={}):  # Render qui indique si des contenus sont à modérer dans chaque page
     count = Feed.objects.filter(moderator_group__in=request.user.groups.all()).filter(content_feed__state="P").filter(content_feed__is_valid=True).count()
     dict.update({"moderate_count":count})
     return render(request, template, dict)
@@ -72,9 +73,10 @@ def content_list_moderate(request, pk):
 
 def moderation_home(request):
     if request.user.is_superuser:
-        feed = Feed.objects.filter(content_feed__state="P")
+        feed = Feed.objects.filter(content_feed__state="P").distinct()
     else:
-        feed = Feed.objects.filter(content_feed__state="P").filter(moderator_group__in=request.user.groups.all())
+        feed = Feed.objects.filter(content_feed__state="P").filter(
+            moderator_group__in=request.user.groups.all()).distinct()
     return render_specific(request, 'app/moderation_home.html', {"feed": feed})
 
 def content_view(request, pk):
@@ -109,6 +111,8 @@ def reject_content(request, pk):
 def json_screen(request, token_screen):
     json = []
     screen = get_object_or_404(Screen,token=token_screen)
+    screen.date_last_call = timezone.now()  # On enregistre l'appel au json (pour le monitoring)
+    screen.save()
     urgent = Subscription.objects.filter(subscription_type="U").filter(screen=screen)
     if urgent.count()>0:
         for subscription in urgent:

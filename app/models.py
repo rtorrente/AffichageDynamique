@@ -1,9 +1,11 @@
-from django.db import models
-from django.contrib.auth.models import User
-from django.contrib.auth.models import Group
-from django.utils import timezone
-from AffichageDynamique import settings
 import uuid
+from django.contrib.auth.models import Group
+from django.contrib.auth.models import User
+from django.db import models
+from django.utils import timezone
+
+from AffichageDynamique import settings
+
 CONTENT_TYPE = [
     ('I', "Image uploadée"),
     ('U', "URL"),
@@ -32,6 +34,7 @@ class FeedGroup(models.Model):
 
 class Feed(models.Model):
     name = models.CharField(verbose_name='Nom du flux', blank=False, max_length=255, null=False)
+    description = models.CharField(verbose_name='Description du flux', blank=True, max_length=255, null=True)
     submitter_group = models.ForeignKey(Group, on_delete=models.SET_DEFAULT, default=1, related_name="feed_submitter")
     moderator_group = models.ForeignKey(Group, on_delete=models.SET_DEFAULT, default=1, related_name="feed_moderator")
     feed_group = models.ForeignKey(FeedGroup, on_delete=models.PROTECT, null=True, blank=True)
@@ -45,7 +48,6 @@ class Feed(models.Model):
             if cont.active:
                 sum = sum + 1
         return sum
-
 
 class Screen(models.Model):
     token = models.UUIDField(unique=True, default=uuid.uuid4, editable=False)
@@ -61,6 +63,7 @@ class Screen(models.Model):
     tv_screen_on = models.BooleanField(default=False)
     hostname=models.CharField(blank=True, null=True, max_length=50)
     ip = models.GenericIPAddressField(blank=True, null=True)
+    hidden = models.BooleanField(default=False)
     def __str__(self):
         return self.name
 
@@ -107,7 +110,6 @@ class Content(models.Model):
             return image.get_image_url
         else:
             return "no_image"
-
 
 class Image(models.Model):
     image = models.ImageField(upload_to='contents')

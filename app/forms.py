@@ -1,7 +1,8 @@
-from django import forms
-from .models import Content
 from bootstrap_datepicker_plus import DateTimePickerInput
+from django import forms
 from django.utils import timezone
+
+from .models import Content
 
 
 class ContentFormImage(forms.ModelForm):

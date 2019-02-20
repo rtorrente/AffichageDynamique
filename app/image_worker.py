@@ -1,9 +1,11 @@
-from PyPDF2 import PdfFileReader
-from wand.image import Image
-from wand.color import Color
-from django.utils import six
 import os
+from PyPDF2 import PdfFileReader
+from django.utils import six
+from wand.color import Color
+from wand.image import Image
+
 from .models import Image as ImageModel
+
 
 def convert_pdf_to_img(file1, content):
     size = '_' + str(1920) + 'x' + str(1080) + 'px'

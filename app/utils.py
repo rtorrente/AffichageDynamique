@@ -1,7 +1,8 @@
-from AffichageDynamique import settings
 import os
-from .models import Image, Content
 from django.utils import timezone
+
+from AffichageDynamique import settings
+from .models import Image, Content
 
 
 def delete_image_orphan():
