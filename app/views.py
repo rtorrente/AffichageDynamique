@@ -143,4 +143,4 @@ def json_screen(request, pk_screen):
 
 def display(request, pk):
     screen = get_object_or_404(Screen, pk=pk)
-    return render(request, 'app/display.html', {"screen": screen, "media":settings.MEDIA_URL})
+    return render(request, 'app/display.html', {"screen": screen, "media":settings.MEDIA_URL, "static":settings.STATIC_URL})
