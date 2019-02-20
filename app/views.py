@@ -151,3 +151,11 @@ def json_screen(request, token_screen):
 def display(request, token_screen):
     screen = get_object_or_404(Screen, token=token_screen)
     return render(request, 'app/display.html', {"screen": screen, "media":settings.MEDIA_URL, "static":settings.STATIC_URL})
+
+
+def list_screen(request):
+    if request.user.is_superuser:
+        screen = Screen.objects.all()
+    else:
+        screen = Screen.objects.filter(hidden=False)
+    return render(request, 'app/list_screen.html', {"screen": screen})
