@@ -28,7 +28,7 @@ def ContentCreateImage(request):
         form.instance.user = request.user
         form.instance.content_type="I"
         form.instance.content_url="image"
-        form.instance.state = False
+        form.instance.state = 'P'
         validator(request.FILES['file'])
         content = form.save()
         tmp_url = settings.BASE_DIR + '/tmp/' +  request.FILES['file'].name
