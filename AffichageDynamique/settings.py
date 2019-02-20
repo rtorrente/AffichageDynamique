@@ -31,7 +31,7 @@ ALLOWED_HOSTS = ['affichage.bde-insa-lyon.fr']
 if DEBUG:
     ALLOWED_HOSTS.extend(['127.0.0.1'])
     ALLOWED_HOSTS.extend(['localhost'])
-    ALLOWED_HOSTS.extend(['affichage-new.bde-insa-lyon.fr'])
+    ALLOWED_HOSTS.extend(['affichage.test.bde-insa-lyon.fr'])
 
 
 # Application definition
