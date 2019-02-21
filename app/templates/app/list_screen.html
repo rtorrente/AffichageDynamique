@@ -6,9 +6,12 @@
     <ul class="list-unstyled">
         {% for content_detail in screen %}
             <li class="media my-4">
-                <div style="width: 220px; height: 112.25px; text-align: center"><img
-                        src="{{ content_detail.get_first_content_url }}" style="max-height: 112.25px; max-width: 200px"
-                        class="mr-3" alt="..."></div>
+                <div style="width: 220px; text-align: center; display:table-cell; vertical-align:middle;">
+                    {% if content_detail.is_ok %}
+                        <h2><span class="badge badge-success">En ligne</span></h2>
+                    {% else %}
+                    {% endif %}
+                </div>
                 <div class="media-body">
                     <h5 class="mt-0 mb-1"><a
                             href="{% url "content_view" content_detail.pk %}">{{ content_detail.name }}</a>
@@ -17,6 +20,7 @@
                     <i class="fa fa-users"></i> {{ content_detail.owner_group.name }}
                 </div>
             </li>
+            <hr align="center" width="50%" color="midnightblue" size="3">
         {% endfor %}
     </ul>
 {% endblock %}

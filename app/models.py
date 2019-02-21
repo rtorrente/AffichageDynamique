@@ -67,6 +67,10 @@ class Screen(models.Model):
     def __str__(self):
         return self.name
 
+    @property
+    def is_ok(self):
+        return True
+
 class Subscription(models.Model):
     screen = models.ForeignKey(Screen, on_delete=models.CASCADE, null=True, blank=True)
     feed = models.ForeignKey(Feed, on_delete=models.CASCADE, null=True, blank=True)

@@ -22,10 +22,10 @@ services:
     volumes:
     - affichageDynamique-staticfiles:/app/staticfiles
     - affichageDynamique-media:/app/media
+    - affichageDynamique-nginx:/app/config/nginx
     tty: true
     depends_on:
     - affichageDynamique-db
-    - affichageDynamique-assets
     networks:
       main:
         aliases:
@@ -39,6 +39,8 @@ services:
     - 80:80
     tty: true
     restart: always
+    depends_on:
+    - affichageDynamique-app
     networks:
       main:
         aliases:
