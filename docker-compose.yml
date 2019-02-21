@@ -3,19 +3,9 @@ volumes:
   affichageDynamique-database:
   affichageDynamique-staticfiles:
   affichageDynamique-media:
+networks:
+  main:
 services:
-  affichageDynamique-assets:
-    image: rtorrente65/django_nginx_proxy
-    volumes:
-    - affichageDynamique-media:/app/media
-    - affichageDynamique-staticfiles:/app/staticfiles
-    ports:
-    - 80:80
-    restart: always
-    depends_on:
-    - affichageDynamique-app
-    links:
-    - "affichageDynamique-app:app"
   affichageDynamique-app:
     image: bdeinsalyon/affichage_dynamique
     environment:
@@ -26,6 +16,7 @@ services:
       MAILGUN_DOMAIN: mg.bde-insa-lyon.fr
       DEFAULT_FROM_EMAIL: affichage@mg.bde-insa-lyon.fr
     stdin_open: true
+    restart: always
     expose:
     - "8000"
     volumes:
@@ -34,12 +25,34 @@ services:
     tty: true
     depends_on:
     - affichageDynamique-db
-    links:
-    - "affichageDynamique-db:db"
+    - affichageDynamique-assets
+    networks:
+      main:
+        aliases:
+        - app
+  affichageDynamique-assets:
+    image: rtorrente65/django_nginx_proxy
+    volumes:
+    - affichageDynamique-media:/app/media
+    - affichageDynamique-staticfiles:/app/staticfiles
+    ports:
+    - 80:80
+    tty: true
+    restart: always
+    networks:
+      main:
+        aliases:
+        - nginx
   affichageDynamique-db:
     image: postgres:10
     environment:
       POSTGRES_USER: ad
       POSTGRES_DB: ad
+    restart: always
+    tty: true
     volumes:
     - affichageDynamique-database:/var/lib/postgresql/data/
+    networks:
+      main:
+        aliases:
+        - db
