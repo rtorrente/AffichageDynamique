@@ -136,6 +136,7 @@ MEDIA_ROOT  = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
 LOGOUT_REDIRECT_URL = "/"
+ACCOUNT_ACTIVATION_DAYS = 7
 
 ANYMAIL = {
     # (exact settings here depend on your ESP...)

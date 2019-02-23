@@ -19,11 +19,12 @@ from django.urls import path, include
 from django_registration.backends.activation.views import RegistrationView
 
 from AffichageDynamique import settings
-from app.forms import MyExtendedForm
+from app.forms import UserProfileRegistrationForm
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('accounts/signup', RegistrationView.as_view(form_class=MyExtendedForm)),
+    path('accounts/register/', RegistrationView.as_view(form_class=UserProfileRegistrationForm),
+         name='registration_register'),
     path('accounts/', include('django_registration.backends.activation.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
     path('', include('app.urls')),

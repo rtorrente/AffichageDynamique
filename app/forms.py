@@ -1,14 +1,22 @@
 from bootstrap_datepicker_plus import DateTimePickerInput
 from django import forms
+from django.contrib.auth.models import User
 from django.utils import timezone
 from django_registration.forms import RegistrationForm
 
 from .models import Content
 
 
-class MyExtendedForm(RegistrationForm):
-    first_name = forms.CharField(required=True, help_text="", label="Prénom"),
-    last_name = forms.CharField(required=True, help_text="", label="Nom"),
+class UserProfileRegistrationForm(RegistrationForm):
+    first_name = forms.CharField(label='Prénom', required=True)
+    last_name = forms.CharField(label='Nom', required=True)
+    password1 = forms.CharField(widget=forms.PasswordInput, label="Mot de passe")
+    password2 = forms.CharField(widget=forms.PasswordInput, label="Confirmation du mot de passe")
+
+    class Meta:
+        model = User
+        fields = (User.USERNAME_FIELD, "email", 'first_name', 'last_name')
+        help_texts = {'username': ""}
 
 class ContentFormImage(forms.ModelForm):
     file = forms.FileField(required=False, label="Fichier à afficher (.png, .jpg, .jpeg, .pdf)")

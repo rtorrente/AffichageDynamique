@@ -20,13 +20,19 @@
 
 <body>
 <div class="container">
-    <div class="text-center mb-4">
-        <img class="mb-4" src="https://logos.bde-insa-lyon.fr/bde/bde.svg" alt="" width="72" height="72">
-        <h1 class="h3 mb-3 font-weight-normal">{% block titre %}Affichage Dynamique{% endblock %}</h1>
+    <main role="main" class="flex-shrink-0">
+        <div class="text-center">
+            <a href="{% url 'home' %}"><img src="https://logos.bde-insa-lyon.fr/bde/bde.svg" alt="" width="72"
+                                            height="72">
+                <h1 class="h3 font-weight-normal" style="color: black">{% block titre %}Affichage
+                    Dynamique{% endblock %}</h1></a>
         {% block content %}
         {% endblock %}
-        <p class="mt-5 mb-3 text-muted text-center">&copy; 2017-2018</p>
-    </div>
+            <p class="text-muted text-center"><b>&copy;</b> <a href="https://github.com/rtorrente" target="_blank"
+                                                               style="color: black">Romain TORRENTE</a>, <a
+                    href="https://www.bde-insa-lyon.fr" target="_blank" style="color: black">BdE INSA Lyon</a> 2019</p>
+        </div>
+    </main>
 </div>
 </body>
 </html>

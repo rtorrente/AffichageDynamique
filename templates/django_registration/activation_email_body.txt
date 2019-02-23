@@ -1,0 +1,11 @@
+{% autoescape off %}
+Salut {{ user.first_name }} {{ user.last_name }},
+
+Merci de ton inscription sur l'Affichage Dynamique du BdE INSA Lyon, active ton compte en cliquant sur le lien suivant afin de pouvoir diffuser sur les écrans du campus : {{ scheme }}://{{ site.domain }}/accounts/activate/{{ activation_key }}
+
+Attention, ce lien restera valide uniquement 7 jours.
+
+Merci,
+L'équipe informatique du BdE INSA Lyon.
+
+{% endautoescape %}
