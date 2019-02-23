@@ -40,3 +40,12 @@ class ContentFormImage(forms.ModelForm):
 class RejectContentForm(forms.Form):
     reason = forms.TextInput()
 
+
+class ScreenMonitoringEndpoint(forms.Form):
+    token = forms.UUIDField(required=True)
+    temperature = forms.FloatField(required=False)
+    load = forms.CharField(required=False)
+    fs_ro = forms.BooleanField(required=False)
+    tv_screen_on = forms.BooleanField(required=False)
+    hostname = forms.CharField(required=True)
+    ip = forms.GenericIPAddressField(required=True)

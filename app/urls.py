@@ -16,4 +16,6 @@ urlpatterns = [
 
     path('json_screen/<uuid:token_screen>', views.json_screen, name='json_screen'),  # NoLoginRequired
     path('display/<uuid:token_screen>', views.display, name='display'),  # NoLoginRequired
+    path('screen_monitoring_endpoint/', views.screen_monitoring_endpoint, name='screen_monitoring_endpoint'),
+    # NoLoginRequired
 ]
