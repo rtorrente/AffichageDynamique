@@ -22,9 +22,15 @@
         return JSON.parse(JSON.stringify(src));
     }
 
+    function log(content) {
+        if ({{ debug }}) {
+            console.log(content);
+        }
+    }
+
     function next_content() {
-        console.log("Call_next_content_function")
-        console.log(json_actuel[content_number].type)
+        log("Call_next_content_function")
+        log(json_actuel[content_number].type)
         $("#content1").fadeOut("slow", end_fadeOut);
         function end_fadeOut(){
             if (json_actuel[content_number].type==="image") {
@@ -46,7 +52,7 @@
             setTimeout(next_content, json_actuel[content_number].duration*1000);
             content_number++;
             if(content_number===json_actuel.length){
-                console.log("fin de parsage d'une liste")
+                log("fin de parsage d'une liste")
                 content_number=0;
                 if(json_new.length>0){
                     json_actuel=copy(json_new);
@@ -55,26 +61,26 @@
         }
     }
     function download(){
-        console.log("Call_download_function")
-        var json = $.getJSON("{% url "json_screen" screen.token %}")
+        log("Call_download_function")
+        $.getJSON("{% url "json_screen" screen.token %}")
             .done(function(data) {
-                console.log("Bien recu")
+                log("Bien recu")
                 json_new = copy(data);
             })
             .fail(function() {
-                console.log( "error" );
+                log("error");
             });
         setTimeout(download, 30*1000);
     }
     function start(){
-        console.log("Call_start_function")
+        log("Call_start_function")
         if (json_new.length>0){
-            console.log("content_ok");
+            log("content_ok");
             json_actuel = copy(json_new);
             next_content();
         }
         else{
-            console.log("no content");
+            log("no content");
             setTimeout(start, 30*1000);
         }
     }

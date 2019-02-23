@@ -21,6 +21,7 @@ def render_specific(request, template, dict={}):  # Render qui indique si des co
     dict.update({"moderate_count":count})
     return render(request, template, dict)
 
+
 def ContentCreateImage(request):
     form = ContentFormImage(request.POST or None)
     if not request.user.is_superuser:
@@ -150,7 +151,9 @@ def json_screen(request, token_screen):
 
 def display(request, token_screen):
     screen = get_object_or_404(Screen, token=token_screen)
-    return render(request, 'app/display.html', {"screen": screen, "media":settings.MEDIA_URL, "static":settings.STATIC_URL})
+    return render(request, 'app/display.html',
+                  {"screen": screen, "media": settings.MEDIA_URL, "static": settings.STATIC_URL,
+                   "debug": settings.DEBUG})
 
 
 def list_screen(request):

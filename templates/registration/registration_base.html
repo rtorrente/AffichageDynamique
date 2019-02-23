@@ -1,0 +1,32 @@
+{% load static %}
+{% load crispy_forms_tags %}
+
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Login Page</title>
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <!-- Custom styles for this template -->
+    <link href="{% static 'css/floating-labels.css' %}" rel="stylesheet">
+</head>
+
+<body>
+<div class="container">
+    <div class="text-center mb-4">
+        <img class="mb-4" src="https://logos.bde-insa-lyon.fr/bde/bde.svg" alt="" width="72" height="72">
+        <h1 class="h3 mb-3 font-weight-normal">{% block titre %}Affichage Dynamique{% endblock %}</h1>
+        {% block content %}
+        {% endblock %}
+        <p class="mt-5 mb-3 text-muted text-center">&copy; 2017-2018</p>
+    </div>
+</div>
+</body>
+</html>

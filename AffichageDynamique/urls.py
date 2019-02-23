@@ -16,11 +16,15 @@ Including another URLconf
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
+from django_registration.backends.activation.views import RegistrationView
 
 from AffichageDynamique import settings
+from app.forms import MyExtendedForm
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('accounts/signup', RegistrationView.as_view(form_class=MyExtendedForm)),
+    path('accounts/', include('django_registration.backends.activation.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
     path('', include('app.urls')),
 ]

@@ -14,8 +14,7 @@
                 </div>
                 <div class="media-body">
                     <h5 class="mt-0 mb-1"><a
-                            href="{% url "content_view" content_detail.pk %}">{{ content_detail.name }}</a>
-                        ({{ content_detail.width }}x{{ content_detail.height }})</h5>
+                            href="{% url "content_view" content_detail.pk %}">{{ content_detail.name }}</a></h5>
                     <i class="fas fa-map-marker-alt"></i> {{ content_detail.place }}<br/>
                     <i class="fa fa-users"></i> {{ content_detail.owner_group.name }}
                 </div>

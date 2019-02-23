@@ -47,7 +47,8 @@ INSTALLED_APPS = [
     'app',
     'crispy_forms',
     'anymail',
-    'bootstrap_datepicker_plus'
+    'bootstrap_datepicker_plus',
+    'django_registration'
 ]
 
 MIDDLEWARE = [
