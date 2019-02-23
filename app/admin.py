@@ -10,4 +10,4 @@ class Admin(admin.ModelAdmin):
 
 @admin.register(Screen)
 class ScreenAdmin(admin.ModelAdmin):
-  list_display = ('name', 'place', 'token')
+    list_display = ('name', 'place', 'token', 'date_last_call')
