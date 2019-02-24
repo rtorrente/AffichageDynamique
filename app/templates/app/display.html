@@ -47,12 +47,12 @@
                     $("#content1").html('<img style="max-height: 100%; max-width: 100%" src="{{ media }}' + json_actuel[content_number].content + '">')
                 }
                 else if (json_actuel[content_number].type === "youtube") {
-                    $("#content1").html('<iframe id="ytplayer" type="text/html" width="{{ screen.width }}" height="{{ screen.height }}"\n' +
+                    $("#content1").html('<iframe id="ytplayer" type="text/html" width="' + $(window).width() + '" height="' + $(window).height() + '"\n' +
                         'src="https://www.youtube.com/embed/' + json_actuel[content_number].content + '?autoplay=1&controls=0&disablekb=1&fs=0&modestbranding=1&iv_load_policy=3&showinfo=0"\n' +
                         'frameborder="0" allowfullscreen>')
                 }
                 else if (json_actuel[content_number].type === "iframe") {
-                    $("#content1").html('<iframe type="text/html" width="{{ screen.width }}" height="{{ screen.height }}"\n' +
+                    $("#content1").html('<iframe type="text/html" width="\' + $( window ).width() + \'" height="\' + $( window ).height() + \'"\n' +
                         'src="' + json_actuel[content_number].content + '"\n' +
                         'frameborder="0" allowfullscreen>')
                 }
