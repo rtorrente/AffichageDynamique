@@ -31,34 +31,47 @@
     function next_content() {
         log("Call_next_content_function")
         log(json_actuel[content_number].type)
-        $("#content1").fadeOut("slow", end_fadeOut);
-        function end_fadeOut(){
-            if (json_actuel[content_number].type==="image") {
-                $("#content1").html('<img style="max-height: 100%; max-width: 100%" src="{{ media }}'+json_actuel[content_number].content+'">')
+        if (json_actuel.length === 0) {
+            log("fin de parsage d'une liste")
+            content_number = 0;
+            if (json_new.length > 0) {
+                json_actuel = copy(json_new);
             }
-            else if(json_actuel[content_number].type==="youtube"){
-                $("#content1").html('<iframe id="ytplayer" type="text/html" width="{{ screen.width }}" height="{{ screen.height }}"\n' +
-                    'src="https://www.youtube.com/embed/'+ json_actuel[content_number].content + '?autoplay=1&controls=0&disablekb=1&fs=0&modestbranding=1&iv_load_policy=3&showinfo=0"\n' +
-                    'frameborder="0" allowfullscreen>')
-            }
-            else if(json_actuel[content_number].type==="iframe"){
-                $("#content1").html('<iframe type="text/html" width="{{ screen.width }}" height="{{ screen.height }}"\n' +
-                    'src="'+ json_actuel[content_number].content + '"\n' +
-                    'frameborder="0" allowfullscreen>')
-            }
-            $("#content1").fadeIn("slow", end_fadeIn);
+            setTimeout(next_content, 30 * 1000);
         }
-        function end_fadeIn(){
-            setTimeout(next_content, json_actuel[content_number].duration*1000);
-            content_number++;
-            if(content_number===json_actuel.length){
-                log("fin de parsage d'une liste")
-                content_number=0;
-                if(json_new.length>0){
-                    json_actuel=copy(json_new);
+        else {
+            $("#content1").fadeOut("slow", end_fadeOut);
+
+            function end_fadeOut() {
+                if (json_actuel[content_number].type === "image") {
+                    $("#content1").html('<img style="max-height: 100%; max-width: 100%" src="{{ media }}' + json_actuel[content_number].content + '">')
+                }
+                else if (json_actuel[content_number].type === "youtube") {
+                    $("#content1").html('<iframe id="ytplayer" type="text/html" width="{{ screen.width }}" height="{{ screen.height }}"\n' +
+                        'src="https://www.youtube.com/embed/' + json_actuel[content_number].content + '?autoplay=1&controls=0&disablekb=1&fs=0&modestbranding=1&iv_load_policy=3&showinfo=0"\n' +
+                        'frameborder="0" allowfullscreen>')
+                }
+                else if (json_actuel[content_number].type === "iframe") {
+                    $("#content1").html('<iframe type="text/html" width="{{ screen.width }}" height="{{ screen.height }}"\n' +
+                        'src="' + json_actuel[content_number].content + '"\n' +
+                        'frameborder="0" allowfullscreen>')
+                }
+                $("#content1").fadeIn("slow", end_fadeIn);
+            }
+
+            function end_fadeIn() {
+                setTimeout(next_content, json_actuel[content_number].duration * 1000);
+                content_number++;
+                if (content_number === json_actuel.length) {
+                    log("fin de parsage d'une liste")
+                    content_number = 0;
+                    if (json_new.length > 0) {
+                        json_actuel = copy(json_new);
+                    }
                 }
             }
         }
+
     }
     function download(){
         log("Call_download_function")
