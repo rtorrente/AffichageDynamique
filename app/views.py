@@ -152,9 +152,13 @@ def json_screen(request, token_screen):
 
 def display(request, token_screen):
     screen = get_object_or_404(Screen, token=token_screen)
+    if settings.DEBUG:
+        debug = 1
+    else:
+        debug = 0
     return render(request, 'app/display.html',
                   {"screen": screen, "media": settings.MEDIA_URL, "static": settings.STATIC_URL,
-                   "debug": settings.DEBUG})
+                   "debug": debug})
 
 
 def list_screen(request):
