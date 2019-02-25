@@ -28,46 +28,63 @@
         }
     }
 
+    function load_ok() { //Lorsque le HTML est chargé sur la nouvelle div
+        log("On load")
+        if ($("#content1").is(":hidden")) {
+            future_div = $("#content1");
+            actual_div = $("#content2");
+        }
+        else {
+            future_div = $("#content2");
+            actual_div = $("#content1");
+        }
+        actual_div.fadeOut("slow", function () {
+            future_div.fadeIn("slow", function () {
+                actual_div.html("");
+            });
+        });
+    }
+
     function next_content() {
-        log("Call_next_content_function")
-        log(json_actuel[content_number].type)
+        log("Call_next_content_function");
+        log(json_actuel[content_number].type);
         if (json_actuel.length === 0) {
-            log("fin de parsage d'une liste")
+            log("fin de parsage d'une liste");
             content_number = 0;
             if (json_new.length > 0) {
                 json_actuel = copy(json_new);
             }
-            setTimeout(next_content, 30 * 1000);
+            setTimeout(next_content, 10 * 1000);
         }
         else {
-            $("#content1").fadeOut("slow", end_fadeOut);
-
-            function end_fadeOut() {
-                if (json_actuel[content_number].type === "image") {
-                    $("#content1").html('<img style="max-height: 100%; max-width: 100%" src="{{ media }}' + json_actuel[content_number].content + '">')
-                }
-                else if (json_actuel[content_number].type === "youtube") {
-                    $("#content1").html('<iframe id="ytplayer" type="text/html" width="' + $(window).width() + '" height="' + $(window).height() + '"\n' +
-                        'src="https://www.youtube.com/embed/' + json_actuel[content_number].content + '?autoplay=1&controls=0&disablekb=1&fs=0&modestbranding=1&iv_load_policy=3&showinfo=0&VQ=HD1080"\n' +
-                        'frameborder="0" allowfullscreen>')
-                }
-                else if (json_actuel[content_number].type === "iframe") {
-                    $("#content1").html('<iframe type="text/html" width="\' + $( window ).width() + \'" height="\' + $( window ).height() + \'"\n' +
-                        'src="' + json_actuel[content_number].content + '"\n' +
-                        'frameborder="0" allowfullscreen>')
-                }
-                $("#content1").fadeIn("slow", end_fadeIn);
+            if ($("#content1").is(":hidden")) {
+                future_div = $("#content1");
+                actual_div = $("#content2");
             }
-
-            function end_fadeIn() {
-                setTimeout(next_content, json_actuel[content_number].duration * 1000);
-                content_number++;
-                if (content_number === json_actuel.length) {
-                    log("fin de parsage d'une liste")
-                    content_number = 0;
-                    if (json_new.length > 0) {
-                        json_actuel = copy(json_new);
-                    }
+            else {
+                future_div = $("#content2");
+                actual_div = $("#content1");
+            }
+            if (json_actuel[content_number].type === "image") {
+                future_div.html('<img onload="load_ok()" style="max-height: 100%; max-width: 100%" src="{{ media }}' + json_actuel[content_number].content + '">');
+            }
+            else if (json_actuel[content_number].type === "youtube") {
+                future_div.html('<iframe onload="load_ok()" id="ytplayer" type="text/html" width="' + $(window).width() + '" height="' + $(window).height() + '"\n' +
+                    'src="https://www.youtube.com/embed/' + json_actuel[content_number].content + '?autoplay=1&controls=0&disablekb=1&fs=0&modestbranding=1&iv_load_policy=3&showinfo=0&VQ=HD1080"\n' +
+                    'frameborder="0" allowfullscreen>');
+            }
+            else if (json_actuel[content_number].type === "iframe") {
+                future_div.html('<iframe onload="load_ok()" type="text/html" width="\' + $( window ).width() + \'" height="\' + $( window ).height() + \'"\n' +
+                    'src="' + json_actuel[content_number].content + '"\n' +
+                    'frameborder="0" allowfullscreen>');
+            }
+            setTimeout(next_content, json_actuel[content_number].duration * 1000);
+            content_number++;
+            if (content_number === json_actuel.length) {
+                log("fin de parsage d'une liste");
+                content_number = 0;
+                if (json_new.length > 0) {
+                    json_actuel = copy(json_new);
                 }
             }
         }
@@ -94,7 +111,7 @@
         }
         else{
             log("no content");
-            setTimeout(start, 30*1000);
+            setTimeout(start, 10 * 1000);
         }
     }
     download(); //Attention ne pas mettre dans start sinon double appel si start échoue une fois
@@ -102,4 +119,5 @@
 </script>
 <div style="min-height: 100%; min-width: 100%; display: table-cell; vertical-align: middle; text-align: center">
     <div id="content1"><img style="max-height: 100%; max-width: 100%" src="{{ static }}logo_no_content.png"></div>
+    <div id="content2" style="display: none;"></div>
 </div>
