@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from django_registration.forms import RegistrationForm
 
-from .models import Content
+from .models import Content, Subscription
 
 
 class UserProfileRegistrationForm(RegistrationForm):
@@ -57,3 +57,9 @@ class ScreenMonitoringEndpoint(forms.Form):
     tv_screen_on = forms.BooleanField(required=False)
     hostname = forms.CharField(required=True)
     ip = forms.GenericIPAddressField(required=True)
+
+
+class SubscriptionForm(forms.ModelForm):
+    class Meta:
+        model = Subscription
+        exclude = ('screen', 'subscription_type')

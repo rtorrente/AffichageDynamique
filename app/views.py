@@ -1,3 +1,4 @@
+from django.forms import HiddenInput
 from django.http import HttpResponseForbidden, HttpResponse
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
@@ -9,7 +10,7 @@ from upload_validator import FileTypeValidator
 
 from AffichageDynamique import settings
 from app import image_worker
-from .forms import ContentFormImage, RejectContentForm, ScreenMonitoringEndpoint
+from .forms import ContentFormImage, RejectContentForm, ScreenMonitoringEndpoint, SubscriptionForm
 from .models import Feed, Content, Subscription, Screen, Image
 
 validator = FileTypeValidator(
@@ -167,6 +168,44 @@ def list_screen(request):
     else:
         screen = Screen.objects.filter(hidden=False)
     return render(request, 'app/list_screen.html', {"screen": screen})
+
+
+def view_screen(request, pk_screen):
+    screen = get_object_or_404(Screen, pk=pk_screen)
+    if not request.user.is_superuser and screen.hidden and screen.owner_group not in request.user.groups.all():
+        return HttpResponseForbidden()
+    urgent = Subscription.objects.filter(screen=screen).filter(subscription_type="U").order_by("-priority")
+    normal = Subscription.objects.filter(screen=screen).filter(subscription_type="N").order_by("-priority")
+    return render(request, 'app/view_screen.html',
+                  {"screen": screen, "urgent": urgent, "normal": normal})
+
+
+def delete_subscription(request, pk_sub):
+    subscription = get_object_or_404(Subscription, pk=pk_sub)
+    if not request.user.is_superuser and subscription.screen.owner_group not in request.user.groups.all():
+        return HttpResponseForbidden()
+    subscription.delete()
+    return redirect(reverse("view_screen", args=[subscription.screen.pk]))
+
+
+def add_subscription(request, pk_screen, type_sub):
+    screen = get_object_or_404(Screen, pk=pk_screen)
+    if not request.user.is_superuser and screen.owner_group not in request.user.groups.all():
+        return HttpResponseForbidden()
+    form = SubscriptionForm(request.POST or None)
+    if type_sub == "U":
+        form.fields["priority"].initial = 1
+        form.fields["priority"].widget = HiddenInput()
+    if not request.user.is_superuser:
+        form.fields["feed"].queryset = Feed.objects.filter(submitter_group__in=request.user.groups.all())
+    if form.is_valid():
+        if not type_sub == "N" and not type_sub == "U":
+            return HttpResponseForbidden()
+        form.instance.subscription_type = type_sub
+        form.instance.screen = screen
+        form.save()
+        return redirect(reverse("view_screen", args=[screen.pk]))
+    return render_specific(request, 'app/add_subscription.html', {"form": form, "screen": screen, "type_sub": type_sub})
 
 
 @csrf_exempt
