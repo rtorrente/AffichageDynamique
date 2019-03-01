@@ -107,11 +107,16 @@ class Content(models.Model):
             return False
     @property
     def get_first_content_url(self):
-        image = self.images.first()
-        if image is not None:
-            return image.get_image_url
-        else:
-            return "no_image"
+        if self.content_type == "I":
+            image = self.images.first()
+            if image is not None:
+                return image.get_image_url
+            else:
+                return "error"
+        elif self.content_type == "Y":
+            return settings.STATIC_URL + "youtube.png"
+        elif self.content_type == "U":
+            return settings.STATIC_URL + "url.png"
 
 class Image(models.Model):
     image = models.ImageField(upload_to='contents')
