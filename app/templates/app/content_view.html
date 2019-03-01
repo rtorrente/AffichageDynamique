@@ -38,9 +38,18 @@
         </div>
         <!--/col-3-->
         <div class="col-sm-9" style="" contenteditable="false">
+            {% if content.content_type == "I" %}
             {% for image in images %}
                 <img src="{{ image.get_image_url }}" style="max-width: 100%; max-height: auto"> <br/>
             {% endfor %}
+            {% elif content.content_type == "Y" %}
+                <iframe id="ytplayer" type="text/html" height="100%" width="100%"
+                        src="https://www.youtube.com/embed/{{ content.content_url }}?VQ=HD1080" frameborder="0"
+                        allowfullscreen>
+            {% elif content.content_type == "U" %}
+                <iframe id="ytplayer" type="text/html" height="100%" width="100%" src="{{ content.content_url }}"
+                        frameborder="0" allowfullscreen>
+            {% endif %}
         </div>
     </div>
 

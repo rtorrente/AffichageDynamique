@@ -10,7 +10,8 @@ from upload_validator import FileTypeValidator
 
 from AffichageDynamique import settings
 from app import image_worker
-from .forms import ContentFormImage, RejectContentForm, ScreenMonitoringEndpoint, SubscriptionForm
+from .forms import ContentFormImage, RejectContentForm, ScreenMonitoringEndpoint, SubscriptionForm, ContentFormYoutube, \
+    ContentFormUrl
 from .models import Feed, Content, Subscription, Screen, Image
 
 validator = FileTypeValidator(
@@ -46,6 +47,42 @@ def ContentCreateImage(request):
         if content.feed.moderator_group in request.user.groups.all() or request.user.is_superuser: #Si l'utilisateur est modérateur ou admin on modére directement
             content.state="A"
         content.is_valid=True
+        content.save()
+        return redirect(reverse("content_list", args=[content.feed.pk]))
+    else:
+        return render_specific(request, 'app/add_content.html', locals())
+
+
+def ContentCreateYoutube(request):
+    form = ContentFormYoutube(request.POST or None)
+    if not request.user.is_superuser:
+        form.fields["feed"].queryset = Feed.objects.filter(submitter_group__in=request.user.groups.all())
+    if form.is_valid():
+        form.instance.user = request.user
+        form.instance.content_type = "Y"
+        form.instance.state = 'P'
+        content = form.save()
+        if content.feed.moderator_group in request.user.groups.all() or request.user.is_superuser:  # Si l'utilisateur est modérateur ou admin on modére directement
+            content.state = "A"
+        content.is_valid = True
+        content.save()
+        return redirect(reverse("content_list", args=[content.feed.pk]))
+    else:
+        return render_specific(request, 'app/add_content.html', locals())
+
+
+def ContentCreateUrl(request):
+    form = ContentFormUrl(request.POST or None)
+    if not request.user.is_superuser:
+        form.fields["feed"].queryset = Feed.objects.filter(submitter_group__in=request.user.groups.all())
+    if form.is_valid():
+        form.instance.user = request.user
+        form.instance.content_type = "U"
+        form.instance.state = 'P'
+        content = form.save()
+        if content.feed.moderator_group in request.user.groups.all() or request.user.is_superuser:  # Si l'utilisateur est modérateur ou admin on modére directement
+            content.state = "A"
+        content.is_valid = True
         content.save()
         return redirect(reverse("content_list", args=[content.feed.pk]))
     else:

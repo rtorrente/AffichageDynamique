@@ -16,7 +16,9 @@ urlpatterns = [
     path('view_content/<int:pk>', login_required(views.content_view), name='content_view'),
     path('approve_content/<int:pk>', login_required(views.approve_content), name='approve_content'),
     path('reject_content/<int:pk>', login_required(views.reject_content), name='reject_content'),
-    path('add_content/', login_required(views.ContentCreateImage), name="add_content"),
+    path('add_content_image/', login_required(views.ContentCreateImage), name="add_content_image"),
+    path('add_content_youtube/', login_required(views.ContentCreateYoutube), name="add_content_youtube"),
+    path('add_content_url/', login_required(views.ContentCreateUrl), name="add_content_url"),
 
     path('json_screen/<uuid:token_screen>', views.json_screen, name='json_screen'),  # NoLoginRequired
     path('display/<uuid:token_screen>', views.display, name='display'),  # NoLoginRequired
