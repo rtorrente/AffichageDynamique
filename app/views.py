@@ -47,11 +47,9 @@ def ContentCreateImage(request):
             content.state="A"
         content.is_valid=True
         content.save()
-        return render_specific(request, 'app/add_content.html', locals())
-        #return redirect(reverse("home"))
+        return redirect(reverse("content_list", args=[content.feed.pk]))
     else:
         return render_specific(request, 'app/add_content.html', locals())
-    #return reverse('show_member', args=(self.object.pk,))
 
 def home(request):
     if request.user.is_superuser:
