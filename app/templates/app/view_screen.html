@@ -34,19 +34,20 @@
                     {% for content in urgent %}
                         {{ content.feed }}<a href="{% url "delete_subscription" content.pk %}"><i style="color: red"
                                                                                                   class="far fa-trash-alt"></i></a>
+                        <br/>
                     {% endfor %}
 
                 </div>
             </div>
             <br/>
             <div class="card">
-                <h5 class="card-header">Flux normaux <a href="{% url "add_subscription" screen.pk "U" %}"><i
+                <h5 class="card-header">Flux normaux <a href="{% url "add_subscription" screen.pk "N" %}"><i
                         class="far fa-plus-square"></i></a></h5>
                 <div class="card-body">
                     {% for content in normal %}
                         {{ content.feed }} - Priorité {{ content.priority }}
                         <a href="{% url "delete_subscription" content.pk %}"><i style="color: red"
-                                                                                class="far fa-trash-alt"></i></a>
+                                                                                class="far fa-trash-alt"></i></a><br/>
                     {% endfor %}
                 </div>
             </div>
