@@ -4,7 +4,7 @@ import commands
 import os
 import requests
 
-token = ""
+token = "e8440b80-70a9-479c-9d63-a07f605d8d9d"
 control_mode = "lg-serial"
 if control_mode == "lg-serial":
     import serial
@@ -20,15 +20,15 @@ def getCPUtemperature():
 def send(jsonData):
     try:
         # On envoi les donnees recuperees. En retour le recepteur nous renvoi si la tele doit etre eteinte ou allumee a ce moment.
-        url = "https://affichage-admin.bde-insa-lyon.fr/recepteur.php"
-        header = {"Content-Type": "application/x-www-form-urlencoded"}
+        url = "http://affichage-test.bde-insa-lyon.fr/screen_monitoring_endpoint/"
+        header = {"Content-Type": "multipart/form-data"}
         jsonData["token"] = token
-        jsonData["id_concerto"] = id_concerto
+        print(jsonData)
         r = requests.post(url, data=jsonData, headers=header)
+        print(r)
         return r.text
     except requests.exceptions.RequestException as e:
-        print
-        "error request"
+        print("error request")
         print
         e
         return 3
@@ -36,9 +36,9 @@ def send(jsonData):
 
 # Envoi des donnees qui ne change pas sans reboot
 jsonData = {}
-jsonData["nom_dns"] = commands.getoutput('hostname').strip()
-jsonData["kernel"] = os.uname()[2]
-jsonData["nb_core"] = commands.getoutput('grep -c processor /proc/cpuinfo')
+jsonData["hostname"] = commands.getoutput('hostname').strip()
+# jsonData["kernel"] = os.uname()[2]
+# jsonData["nb_core"] = commands.getoutput('grep -c processor /proc/cpuinfo')
 print
 jsonData
 send(jsonData)
@@ -55,14 +55,14 @@ while 1:  # Boucle qui pool toutes les 1 min, on utilise pas cron car la connexi
     # Construction du JSON de donnees monitoring
     jsonData = {}
     jsonData["temperature"] = round(getCPUtemperature(), 1)
-    jsonData["heure"] = round(time.time(), 0)
+    #jsonData["heure"] = round(time.time(), 0)
     load = os.getloadavg()
-    jsonData["load_1"] = load[0]
-    jsonData["load_5"] = load[1]
-    jsonData["load_15"] = load[2]
-    jsonData["etat_cec"] = "NULL"
+    jsonData["load"] = str(load[0]) + " " + str(load[1]) + " " + str(load[2])
+    jsonData["tv_screen_on"] = 0
     jsonData["ip"] = commands.getoutput('hostname -I').strip()
-    jsonData["fs"] = commands.getoutput('/kiosk/check_fs.sh')
+    jsonData["hostname"] = commands.getoutput('hostname').strip()
+    # jsonData["fs"] = commands.getoutput('/kiosk/check_fs.sh')
+    jsonData["fs_ro"] = 1
     if control_mode == "lg-serial":
         ser = serial.Serial('/dev/ttyUSB0', timeout=4)
         time.sleep(1)
@@ -71,25 +71,21 @@ while 1:  # Boucle qui pool toutes les 1 min, on utilise pas cron car la connexi
         print
         etat_tv_serial
         if (etat_tv_serial == "a 01 OK01x"):
-            jsonData["etat_cec"] = "on"
+            jsonData["tv_screen_on"] = 1
             tv_is_on = 1
         else:
-            jsonData["etat_cec"] = "off"
+            jsonData["tv_screen_on"] = 0
             tv_is_on = 0
     elif control_mode == "cec":
         tv_is_on = tv.is_on()
         tv_rasp_active = cec.is_active_source(1)
         if tv_is_on and tv_rasp_active:
-            jsonData["etat_cec"] = "on"
+            jsonData["tv_screen_on"] = 1
         else:
-            jsonData["etat_cec"] = "off"
-
-    print
-    jsonData
+            jsonData["tv_screen_on"] = 0
 
     envoi = send(jsonData)
-    print
-    envoi
+    print(envoi)
     # On verifie que ce que demande le recepteur est egal a la realite, sinon on execute les commandes pour corriger
     if control_mode == "lg-serial":
         if int(envoi) == 1 and (not tv_is_on):
