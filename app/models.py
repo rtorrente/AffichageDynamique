@@ -33,7 +33,7 @@ SUBSCRIPTION_TYPE = [
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
         if settings.DEFAULT_GROUP_PK is not None:
-            group = Group.objects.get(pk=settings.DEFAULT_GROUP_PK)
+            group = Group.objects.get(pk=int(settings.DEFAULT_GROUP_PK))
             if group is not None:
                 instance.groups.add(group)
 
