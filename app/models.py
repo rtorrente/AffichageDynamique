@@ -55,6 +55,7 @@ class Screen(models.Model):
     place = models.CharField(verbose_name="Lieu de l'écran", blank=False, max_length=255, null=False)
     owner_group = models.ForeignKey(Group, on_delete=models.SET_DEFAULT, default=1)
     date_last_call = models.DateTimeField()
+    date_last_monitoring = models.DateTimeField(null=True)
     temperature = models.FloatField(blank=True, null=True)
     load = models.CharField(max_length=16, blank=True, null=True)
     fs_ro = models.BooleanField(default=False)

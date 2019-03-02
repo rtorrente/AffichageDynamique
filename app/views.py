@@ -254,6 +254,7 @@ def screen_monitoring_endpoint(request):
         screen.tv_screen_on = form.cleaned_data['tv_screen_on']
         screen.hostname = form.cleaned_data['hostname']
         screen.ip = form.cleaned_data['ip']
+        screen.date_last_monitoring = timezone.now()
         screen.save()
         return HttpResponse(1)
     return HttpResponse(0)
