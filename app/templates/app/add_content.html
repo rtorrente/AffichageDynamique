@@ -2,11 +2,27 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-<form  method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.media }}
-    {{ form|crispy }}
+    <H3>Type de contenu : </H3>
+    <a href="{% url "add_content_image" %}">
+        <button type="button" class="btn btn-primary btn-lg"
+                {% if request.resolver_match.url_name == 'add_content_image' %}disabled{% endif %}>Images/PDF
+        </button>
+    </a>
+    <a href="{% url "add_content_youtube" %}">
+        <button type="button" class="btn btn-primary btn-lg"
+                {% if request.resolver_match.url_name == 'add_content_youtube' %}disabled{% endif %}>Vidéo Youtube
+        </button>
+    </a>
+    <a href="{% url "add_content_url" %}">
+        <button type="button" class="btn btn-primary btn-lg"
+                {% if request.resolver_match.url_name == 'add_content_url' %}disabled{% endif %}>Page WEB
+        </button>
+    </a>
+    <form method="post" enctype="multipart/form-data" style="padding-top: 20px">
+        {% csrf_token %}
+        {{ form.media }}
+        {{ form|crispy }}
 
-    <button  type="submit"  class="btn btn-success btn-lg btn-block">Valider</button>
-</form><br/>
+        <button type="submit" class="btn btn-success btn-lg btn-block">Valider</button>
+    </form><br/>
 {% endblock %}
