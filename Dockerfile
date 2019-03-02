@@ -14,5 +14,6 @@ ENV DJANGO_ENV 'dev'
 ENV MAILGUN_KEY ''
 ENV MAILGUN_DOMAIN ''
 ENV DEFAULT_FROM_EMAIL ''
+ENV DEFAULT_GROUP_PK ''
 RUN chmod +x bash/run-prod.sh
 CMD bash/run-prod.sh
