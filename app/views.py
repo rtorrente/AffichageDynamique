@@ -149,8 +149,9 @@ def reject_content(request, pk):
             return HttpResponseForbidden()
         content.state='R'
         content.save()
+        message = form.cleaned_data['reason']
         msg_plain = render_to_string('app/email_rejected.txt',
-                                     {'user': content.user, 'content': content, 'message': form.cleaned_data['reason']})
+                                     {'user': content.user, 'content': content, 'message': message})
         send_mail(
             'Refus de votre affichage',
             msg_plain,

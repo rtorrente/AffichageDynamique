@@ -1,8 +1,8 @@
 {% autoescape off %}
 Bonjour {{ user.first_name }} {{ user.last_name }},
 
-Ton affichage {{ content.name }} a bien été validé.
-Il sera actif sur le flux {{ content.feed.name }} du {{ content.begin_date }} au {{ content.end_date }}
+L'affichage {{ content.name }} a bien été validé.
+Il sera actif sur le flux {{ content.feed.feed_group.name }} - {{ content.feed.name }} du {{ content.begin_date }} au {{ content.end_date }}
 
 Merci,
 
