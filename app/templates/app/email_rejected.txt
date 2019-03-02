@@ -1,0 +1,9 @@
+{% autoescape off %}
+Bonjour {{ user.first_name }} {{ user.last_name }},
+
+Ton affichage {{ content.name }} a été refusé par les modérateurs avec le message suivant {{ message }}.
+Tu peux soumettre de nouveau ce contenu après avoir réalisé les modifications demandées.
+
+Merci,
+
+{% endautoescape %}

@@ -29,7 +29,7 @@ SUBSCRIPTION_TYPE = [
 # Create your models here.
 
 
-@receiver(post_save, sender=User)
+@receiver(post_save, sender=User)  # Ajout d'un groupe par défaut à la création d'un user si défini dans la config
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
         if int(settings.DEFAULT_GROUP_PK) != 0:

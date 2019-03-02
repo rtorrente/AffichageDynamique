@@ -1,8 +1,10 @@
+from django.core.mail import send_mail
 from django.forms import HiddenInput
 from django.http import HttpResponseForbidden, HttpResponse
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render, redirect
+from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
@@ -130,7 +132,13 @@ def approve_content(request,pk):
         return HttpResponseForbidden()
     content.state='A'
     content.save()
-    #Add approved email
+    msg_plain = render_to_string('app/email_approved.txt', {'user': content.user, 'content': content})
+    send_mail(
+        'Validation de votre affichage',
+        msg_plain,
+        settings.DEFAULT_FROM_EMAIL,
+        [content.user.email],
+    )
     return redirect(reverse("content_list_moderate", args=[content.feed.pk]))
 
 def reject_content(request, pk):
@@ -141,7 +149,14 @@ def reject_content(request, pk):
             return HttpResponseForbidden()
         content.state='R'
         content.save()
-        #Add reject email
+        msg_plain = render_to_string('app/email_rejected.txt',
+                                     {'user': content.user, 'content': content, 'message': form.cleaned_data["reason"]})
+        send_mail(
+            'Refus de votre affichage',
+            msg_plain,
+            settings.DEFAULT_FROM_EMAIL,
+            [content.user.email],
+        )
         return redirect(reverse("content_list_moderate", args=[content.feed.pk]))
     else:
         return redirect(reverse("content_view", args=[pk]))
