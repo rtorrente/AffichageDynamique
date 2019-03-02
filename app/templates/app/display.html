@@ -71,12 +71,12 @@
             else if (json_actuel[content_number].type === "youtube") {
                 future_div.html('<iframe onload="load_ok()" id="ytplayer" type="text/html" width="' + $(window).width() + '" height="' + $(window).height() + '"\n' +
                     'src="https://www.youtube.com/embed/' + json_actuel[content_number].content + '?autoplay=1&controls=0&disablekb=1&fs=0&modestbranding=1&iv_load_policy=3&showinfo=0&VQ=HD1080"\n' +
-                    'frameborder="0" allowfullscreen>');
+                    'frameborder="0" allowfullscreen></iframe>');
             }
             else if (json_actuel[content_number].type === "iframe") {
                 future_div.html('<iframe onload="load_ok()" type="text/html" width="' + $(window).width() + '" height="' + $(window).height() + '"\n' +
                     'src="' + json_actuel[content_number].content + '"\n' +
-                    'frameborder="0" allowfullscreen>');
+                    'frameborder="0" allowfullscreen></iframe>');
             }
             setTimeout(next_content, json_actuel[content_number].duration * 1000);
             content_number++;

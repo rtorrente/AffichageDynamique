@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load crispy_forms_tags %}
 {% block content %}
     <div class="row">
         <div class="col">
@@ -44,11 +45,11 @@
             {% endfor %}
             {% elif content.content_type == "Y" %}
                 <iframe id="ytplayer" type="text/html" height="100%" width="100%"
-                        src="https://www.youtube.com/embed/{{ content.content_url }}?VQ=HD1080" frameborder="0"
-                        allowfullscreen>
+                        src="https://www.youtube.com/embed/{{ content.content_url }}?VQ=HD1080"
+                        frameborder="0"></iframe>
             {% elif content.content_type == "U" %}
                 <iframe id="ytplayer" type="text/html" height="100%" width="100%" src="{{ content.content_url }}"
-                        frameborder="0" allowfullscreen>
+                        frameborder="0"></iframe>
             {% endif %}
         </div>
     </div>
@@ -65,10 +66,10 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <form action="{% url "reject_content" content.pk %}" method="post">
+                        <form method="post" action="{% url "reject_content" content.pk %}"
+                              enctype="multipart/form-data">
                             {% csrf_token %}
-                            <input id="id_reason" type="text" name="reason" maxlength="100" required>
-
+                            {{ form|crispy }}
                     </div>
                     <div class="modal-footer">
                         <button class="btn btn-primary">Valider le rejet</button></form>

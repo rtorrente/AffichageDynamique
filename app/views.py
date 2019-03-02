@@ -121,10 +121,11 @@ def moderation_home(request):
 
 def content_view(request, pk):
     content = get_object_or_404(Content, pk=pk)
+    form = RejectContentForm(None)
     if content.feed.submitter_group not in request.user.groups.all() and not request.user.is_superuser and content.feed.moderator_group not in request.user.groups.all():
         return HttpResponseForbidden()
     image = Image.objects.filter(content=content)
-    return render_specific(request, 'app/content_view.html', {"content": content, "images":image})
+    return render_specific(request, 'app/content_view.html', {"content": content, "images": image, "form": form})
 
 def approve_content(request,pk):
     content = get_object_or_404(Content,pk=pk)

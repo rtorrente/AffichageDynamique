@@ -4,7 +4,7 @@ import commands
 import os
 import requests
 
-token = "e8440b80-70a9-479c-9d63-a07f605d8d9d"
+token = os.getenv('SCREEN_TOKEN')
 control_mode = "lg-serial"
 if control_mode == "lg-serial":
     import serial
@@ -21,27 +21,15 @@ def send(jsonData):
     try:
         # On envoi les donnees recuperees. En retour le recepteur nous renvoi si la tele doit etre eteinte ou allumee a ce moment.
         url = "http://affichage-test.bde-insa-lyon.fr/screen_monitoring_endpoint/"
-        header = {"Content-Type": "multipart/form-data"}
         jsonData["token"] = token
         print(jsonData)
-        r = requests.post(url, data=jsonData, headers=header)
-        print(r)
+        r = requests.post(url, data=jsonData)
         return r.text
     except requests.exceptions.RequestException as e:
         print("error request")
         print
         e
         return 3
-
-
-# Envoi des donnees qui ne change pas sans reboot
-jsonData = {}
-jsonData["hostname"] = commands.getoutput('hostname').strip()
-# jsonData["kernel"] = os.uname()[2]
-# jsonData["nb_core"] = commands.getoutput('grep -c processor /proc/cpuinfo')
-print
-jsonData
-send(jsonData)
 
 if control_mode == "cec":
     # On initialise le CEC

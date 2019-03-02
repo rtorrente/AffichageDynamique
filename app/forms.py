@@ -102,7 +102,7 @@ class ContentFormUrl(forms.ModelForm):
         }
 
 class RejectContentForm(forms.Form):
-    reason = forms.TextInput()
+    reason = forms.CharField(label="Motif du refus", help_text="Envoyé par email à l'utilisateur")
 
 
 class ScreenMonitoringEndpoint(forms.Form):
