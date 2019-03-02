@@ -256,4 +256,4 @@ def screen_monitoring_endpoint(request):
         screen.ip = form.cleaned_data['ip']
         screen.save()
         return HttpResponse(1)
-    return render_specific(request, 'registration/login.html', {"form": form})
+    return HttpResponse(0)
