@@ -10,9 +10,9 @@ services:
     image: bdeinsalyon/affichage_dynamique
     environment:
       DATABASE_URL: postgres://ad@db/ad
-      SECRET_KEY:
+      SECRET_KEY: VvkO8K^X3jC]GvwYTo``yN{JUVzfiNR_7RP!Ngx@,25}i+?o}PTTm'BlSZH7`0%
       DJANGO_ENV: dev
-      MAILGUN_KEY:
+      MAILGUN_KEY: key-f5493545be09db2b796108f153c08003
       MAILGUN_DOMAIN: mg.bde-insa-lyon.fr
       DEFAULT_FROM_EMAIL: affichage@mg.bde-insa-lyon.fr
     stdin_open: true
