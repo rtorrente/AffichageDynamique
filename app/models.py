@@ -1,7 +1,10 @@
 import uuid
 from django.contrib.auth.models import Group
 from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.utils import timezone
 
 from AffichageDynamique import settings
@@ -24,6 +27,16 @@ SUBSCRIPTION_TYPE = [
 ]
 
 # Create your models here.
+
+
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        if settings.DEFAULT_GROUP_PK is not None:
+            group = Group.objects.get(pk=settings.DEFAULT_GROUP_PK)
+            if group is not None:
+                instance.groups.add(group)
+
 
 class FeedGroup(models.Model):
     name = models.CharField(verbose_name='Nom du groupe de flux', blank=False, max_length=255, null=False)

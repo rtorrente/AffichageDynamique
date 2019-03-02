@@ -145,4 +145,4 @@ ANYMAIL = {
 }
 
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL',"affichage@mg.bde-insa-lyon.fr")
-
+DEFAULT_GROUP_PK = os.getenv('DEFAULT_GROUP_PK', None)
