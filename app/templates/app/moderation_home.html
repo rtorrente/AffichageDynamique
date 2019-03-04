@@ -2,15 +2,19 @@
 {% block content %}
     <div>
         <div>
-            {% for team in feed %}
-                {% ifchanged team.feed_group.name %}
-                    </div></div><br/>
-                    <div class="card">
-                    <h5 class="card-header">{{ team.feed_group.name }}</h5>
-                    <div class="card-body">
-                {% endifchanged %}
-                <h6><a href="{% url "content_list_moderate" team.pk %}">{{ team.name }}</a></h6>
+            {% if feed %}
+                {% for team in feed %}
+                    {% ifchanged team.feed_group.name %}
+                        </div></div><br/>
+                        <div class="card">
+                        <h5 class="card-header">{{ team.feed_group.name }}</h5>
+                        <div class="card-body">
+                    {% endifchanged %}
+                    <h6><a href="{% url "content_list_moderate" team.pk %}">{{ team.name }}</a></h6>
 
-            {% endfor %}
+                {% endfor %}
+            {% else %}
+                Aucun contenu à modérer
+            {% endif %}
             </div></div>
 {% endblock %}

@@ -33,11 +33,15 @@
                     si un contenu d'un flux prioritaire est actif</i> <a
                         href="{% url "add_subscription" screen.pk "U" %}"><i class="far fa-plus-square"></i></a></h5>
                 <div class="card-body">
+                    {% if urgent %}
                     {% for content in urgent %}
                         {{ content.feed }}<a href="{% url "delete_subscription" content.pk %}"><i style="color: red"
                                                                                                   class="far fa-trash-alt"></i></a>
                         <br/>
                     {% endfor %}
+                    {% else %}
+                        Aucun flux urgent souscrit
+                    {% endif %}
 
                 </div>
             </div>
@@ -46,6 +50,7 @@
                 <h5 class="card-header">Flux normaux <a href="{% url "add_subscription" screen.pk "N" %}"><i
                         class="far fa-plus-square"></i></a></h5>
                 <div class="card-body">
+                    {% if normal %}
                     {% for content in normal %}
                         {{ content.feed }} - Priorité {{ content.priority }}
                         <a href="{% url "delete_subscription" content.pk %}">{% if content.priority < 10 %}
@@ -56,6 +61,9 @@
                             <i style="color: red"
                                                                                 class="far fa-trash-alt"></i></a><br/>
                     {% endfor %}
+                    {% else %}
+                        Aucun flux normal souscrit
+                    {% endif %}
                 </div>
             </div>
         </div>

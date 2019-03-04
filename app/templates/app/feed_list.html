@@ -1,20 +1,24 @@
 {% extends "base.html" %}
 {% block content %}
     <div><div>
-        {% for team in feed %}
-            {% ifchanged team.feed_group.name %}
-                </div></div><br/>
-                <div class="card">
-                <h5 class="card-header">{{ team.feed_group.name }}</h5>
-                <div class="card-body">
-            {% endifchanged %}
-            <div class="row">
-                <div class="col"><h6><a href="{% url "content_list" team.pk %}">{{ team.name }}</a><br/><span
-                        style="font-size: smaller">{{ team.description }}</span></h6></div>
-                <div class="col"><span
-                        class="badge badge-secondary">{{ team.count_active }} contenu{{ team.count_active|pluralize }} actif{{ team.count_active|pluralize }}</span>
+        {% if content %}
+            {% for team in feed %}
+                {% ifchanged team.feed_group.name %}
+                    </div></div><br/>
+                    <div class="card">
+                    <h5 class="card-header">{{ team.feed_group.name }}</h5>
+                    <div class="card-body">
+                {% endifchanged %}
+                <div class="row">
+                    <div class="col"><h6><a href="{% url "content_list" team.pk %}">{{ team.name }}</a><br/><span
+                            style="font-size: smaller">{{ team.description }}</span></h6></div>
+                    <div class="col"><span
+                            class="badge badge-secondary">{{ team.count_active }} contenu{{ team.count_active|pluralize }} actif{{ team.count_active|pluralize }}</span>
+                    </div>
                 </div>
-            </div>
-        {% endfor %}
+            {% endfor %}
+        {% else %}
+            Aucun flux à afficher
+        {% endif %}
         </div></div> <br/>
 {% endblock %}
