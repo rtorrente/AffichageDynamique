@@ -11,6 +11,8 @@ urlpatterns = [
     path('delete_subscription/<int:pk_sub>', login_required(views.delete_subscription), name='delete_subscription'),
     path('add_subscription/<int:pk_screen>/<str:type_sub>', login_required(views.add_subscription),
          name='add_subscription'),
+    path('up_subscription/<int:pk_sub>', login_required(views.up_subscription), name='up_subscription'),
+    path('down_subscription/<int:pk_sub>', login_required(views.down_subscription), name='down_subscription'),
     path('list_content_moderate/<int:pk>', login_required(views.content_list_moderate), name='content_list_moderate'),
     path('moderation_home/', login_required(views.moderation_home), name='moderation_home'),
     path('view_content/<int:pk>', login_required(views.content_view), name='content_view'),

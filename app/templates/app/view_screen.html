@@ -48,7 +48,12 @@
                 <div class="card-body">
                     {% for content in normal %}
                         {{ content.feed }} - Priorité {{ content.priority }}
-                        <a href="{% url "delete_subscription" content.pk %}"><i style="color: red"
+                        <a href="{% url "delete_subscription" content.pk %}">{% if content.priority < 10 %}
+                            <a href="{% url "up_subscription" content.pk %}"><i
+                                    class="fas fa-plus-circle"></i></a>{% endif %}
+                            {% if content.priority > 1 %}<a href="{% url "down_subscription" content.pk %}"><i
+                                    class="fas fa-minus-circle"></i></a>{% endif %}
+                            <i style="color: red"
                                                                                 class="far fa-trash-alt"></i></a><br/>
                     {% endfor %}
                 </div>

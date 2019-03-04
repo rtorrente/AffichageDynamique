@@ -240,6 +240,25 @@ def delete_subscription(request, pk_sub):
     return redirect(reverse("view_screen", args=[subscription.screen.pk]))
 
 
+def up_subscription(request, pk_sub):
+    subscription = get_object_or_404(Subscription, pk=pk_sub)
+    if not request.user.is_superuser and subscription.screen.owner_group not in request.user.groups.all():
+        return HttpResponseForbidden()
+    if subscription.priority < 10:
+        subscription.priority += 1
+        subscription.save()
+    return redirect(reverse("view_screen", args=[subscription.screen.pk]))
+
+
+def down_subscription(request, pk_sub):
+    subscription = get_object_or_404(Subscription, pk=pk_sub)
+    if not request.user.is_superuser and subscription.screen.owner_group not in request.user.groups.all():
+        return HttpResponseForbidden()
+    if subscription.priority > 1:
+        subscription.priority -= 1
+        subscription.save()
+    return redirect(reverse("view_screen", args=[subscription.screen.pk]))
+
 def add_subscription(request, pk_screen, type_sub):
     screen = get_object_or_404(Screen, pk=pk_screen)
     if not request.user.is_superuser and screen.owner_group not in request.user.groups.all():
