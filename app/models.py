@@ -26,6 +26,16 @@ SUBSCRIPTION_TYPE = [
     ('U', "Urgent")
 ]
 
+DAY_TYPE = [
+    (1, "Lundi"),
+    (2, "Mardi"),
+    (3, "Mercredi"),
+    (4, "Jeudi"),
+    (5, "Vendredi"),
+    (6, "Samedi"),
+    (7, "Dimanche"),
+]
+
 # Create your models here.
 
 
@@ -38,10 +48,38 @@ def create_user_profile(sender, instance, created, **kwargs):
                 instance.groups.add(group)
 
 
-class FeedGroup(models.Model):
-    name = models.CharField(verbose_name='Nom du groupe de flux', blank=False, max_length=255, null=False)
+class HourGroup(models.Model):
+    name = models.CharField(verbose_name="Nom du groupe horaire", blank=False, null=False, max_length=255)
+
     def __str__(self):
         return self.name
+
+
+class Hour(models.Model):
+    day = models.IntegerField(choices=DAY_TYPE, default='1')
+    first_hour = models.TimeField()
+    last_hour = models.TimeField()
+    hour_group = models.ForeignKey(to=HourGroup, null=False, blank=False, related_name="hour", on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.hour_group.name + " - " + str(self.day) + " " + str(self.first_hour) + " - " + str(self.last_hour)
+
+
+class Place(models.Model):
+    name = models.CharField(verbose_name="Nom du groupe horaire", blank=False, null=False, max_length=255)
+    hour_group = models.ForeignKey(to=HourGroup, null=True, on_delete=models.SET_NULL)
+
+    def __str__(self):
+        return self.name
+
+
+
+class FeedGroup(models.Model):
+    name = models.CharField(verbose_name='Nom du groupe de flux', blank=False, max_length=255, null=False)
+
+    def __str__(self):
+        return self.name
+
     def count_feed(self, group):
         return int(Feed.objects.filter(owner_group=group).filter(feed_group=self).count())
 
@@ -76,12 +114,25 @@ class Screen(models.Model):
     hostname=models.CharField(blank=True, null=True, max_length=50)
     ip = models.GenericIPAddressField(blank=True, null=True)
     hidden = models.BooleanField(default=False)
+    place_group = models.ForeignKey(Place, null=True, on_delete=models.SET_NULL)
     def __str__(self):
         return self.name
 
     @property
     def is_ok(self):
         return True
+
+    @property
+    def screen_need_on(self):
+        now = timezone.localtime(timezone.now())
+        day = now.isoweekday()
+        hour = now.time()
+        hour = Hour.objects.filter(hour_group=self.place_group.hour_group).filter(day=day).filter(
+            first_hour__lt=hour).filter(last_hour__gt=hour)
+        if hour.count() > 0:
+            return 1
+        else:
+            return 0
 
 class Subscription(models.Model):
     screen = models.ForeignKey(Screen, on_delete=models.CASCADE, null=True, blank=True)
@@ -103,6 +154,7 @@ class Content(models.Model):
     is_valid = models.BooleanField(null=False, default=False)
     feed = models.ForeignKey(Feed, verbose_name="Flux d'affichage", related_name="content_feed", blank=False, null=False, on_delete=models.CASCADE)
     duration = models.IntegerField(verbose_name="Durée d'apparition à l'écran")
+
     def __str__(self):
         return self.name
     @property

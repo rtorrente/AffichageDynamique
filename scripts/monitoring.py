@@ -27,8 +27,6 @@ def send(jsonData):
         return r.text
     except requests.exceptions.RequestException as e:
         print("error request")
-        print
-        e
         return 3
 
 if control_mode == "cec":

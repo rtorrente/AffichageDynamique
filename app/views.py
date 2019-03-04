@@ -273,5 +273,5 @@ def screen_monitoring_endpoint(request):
         screen.ip = form.cleaned_data['ip']
         screen.date_last_monitoring = timezone.now()
         screen.save()
-        return HttpResponse(1)
+        return HttpResponse(screen.screen_need_on)
     return HttpResponse(0)
