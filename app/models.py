@@ -124,15 +124,18 @@ class Screen(models.Model):
 
     @property
     def screen_need_on(self):
-        now = timezone.localtime(timezone.now())
-        day = now.isoweekday()
-        hour = now.time()
-        hour = Hour.objects.filter(hour_group=self.place_group.hour_group).filter(day=day).filter(
-            first_hour__lt=hour).filter(last_hour__gt=hour)
-        if hour.count() > 0:
+        if self.place_group is not None:
+            now = timezone.localtime(timezone.now())
+            day = now.isoweekday()
+            hour = now.time()
+            hour = Hour.objects.filter(hour_group=self.place_group.hour_group).filter(day=day).filter(
+                first_hour__lt=hour).filter(last_hour__gt=hour)
+            if hour.count() > 0:
+                return 1
+            else:
+                return 0
+        else:  # Si aucune place group n'est définie, on laisse l'écran allumé
             return 1
-        else:
-            return 0
 
 class Subscription(models.Model):
     screen = models.ForeignKey(Screen, on_delete=models.CASCADE, null=True, blank=True)
