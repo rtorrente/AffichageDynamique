@@ -1,4 +1,3 @@
-import uuid
 from django.contrib.auth.models import Group
 from django.contrib.auth.models import User
 from django.contrib.auth.models import User, Group
@@ -101,7 +100,7 @@ class Feed(models.Model):
         return sum
 
 class Screen(models.Model):
-    token = models.UUIDField(unique=True, default=uuid.uuid4, editable=False)
+    token = models.CharField(unique=True, max_length=32)
     name = models.CharField(verbose_name="Nom de l'écran", blank=False, max_length=255, null=False)
     place = models.CharField(verbose_name="Lieu de l'écran", blank=False, max_length=255, null=False)
     owner_group = models.ForeignKey(Group, on_delete=models.SET_DEFAULT, default=1)

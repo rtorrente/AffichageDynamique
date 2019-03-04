@@ -106,7 +106,7 @@ class RejectContentForm(forms.Form):
 
 
 class ScreenMonitoringEndpoint(forms.Form):
-    token = forms.UUIDField(required=True)
+    token = forms.CharField(required=True, max_length=32)
     temperature = forms.FloatField(required=False)
     load = forms.CharField(required=False)
     fs_ro = forms.BooleanField(required=False)

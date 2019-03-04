@@ -1,0 +1,24 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Affichage Dynamique</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+<body>
+<div class="container">
+    <div class="jumbotron">
+        <p align="center"><img src="{% static "app_logo.png" %}" height="150px"></p>
+        <h1 class="display-4">Votre nouvel écran !</h1>
+        <p class="lead">Cet écran n'a pas encore été configuré, rendez-vous sur l'administration Django pour spécifier
+            l'id suivant</p>
+        <hr class="my-4">
+        <div class="alert alert-primary" role="alert" style="text-align: center">
+            <h1>{{ token }}</h1>
+        </div>
+    </div>
+</div>
+</body>
+</html>
