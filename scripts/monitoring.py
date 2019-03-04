@@ -4,7 +4,7 @@ import commands
 import os
 import requests
 
-token = os.getenv('SCREEN_TOKEN')
+token = commands.getoutput('md5sum /etc/machine-id | awk \'{print $1;}\'').strip()
 control_mode = "lg-serial"
 if control_mode == "lg-serial":
     import serial
@@ -27,6 +27,8 @@ def send(jsonData):
         return r.text
     except requests.exceptions.RequestException as e:
         print("error request")
+        print
+        e
         return 3
 
 if control_mode == "cec":
@@ -71,7 +73,6 @@ while 1:  # Boucle qui pool toutes les 1 min, on utilise pas cron car la connexi
             jsonData["tv_screen_on"] = 0
 
     envoi = send(jsonData)
-    print(envoi)
     # On verifie que ce que demande le recepteur est egal a la realite, sinon on execute les commandes pour corriger
     if control_mode == "lg-serial":
         if int(envoi) == 1 and (not tv_is_on):
