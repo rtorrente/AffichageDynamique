@@ -285,16 +285,19 @@ def add_subscription(request, pk_screen, type_sub):
 
 @csrf_exempt
 def screen_monitoring_endpoint(request):
-    form = ScreenMonitoringEndpoint(request.POST or None)
-    if form.is_valid():
-        screen = get_object_or_404(Screen, token=form.cleaned_data['token'])
-        screen.temperature = form.cleaned_data['temperature']
-        screen.load = form.cleaned_data['load']
-        screen.fs_ro = form.cleaned_data['fs_ro']
-        screen.tv_screen_on = form.cleaned_data['tv_screen_on']
-        screen.hostname = form.cleaned_data['hostname']
-        screen.ip = form.cleaned_data['ip']
-        screen.date_last_monitoring = timezone.now()
-        screen.save()
-        return HttpResponse(screen.screen_need_on)
-    return HttpResponse(0)
+    try:
+        form = ScreenMonitoringEndpoint(request.POST or None)
+        if form.is_valid():
+            screen = Screen.objects.get(token=form.cleaned_data['token'])
+            screen.temperature = form.cleaned_data['temperature']
+            screen.load = form.cleaned_data['load']
+            screen.fs_ro = form.cleaned_data['fs_ro']
+            screen.tv_screen_on = form.cleaned_data['tv_screen_on']
+            screen.hostname = form.cleaned_data['hostname']
+            screen.ip = form.cleaned_data['ip']
+            screen.date_last_monitoring = timezone.now()
+            screen.save()
+            return HttpResponse(screen.screen_need_on)
+        return HttpResponse(3)
+    except:
+        return HttpResponse(3)  # Si l'écran n'est pas encore enregistré
