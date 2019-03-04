@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
     <div><div>
-        {% if content %}
+        {% if feed %}
             {% for team in feed %}
                 {% ifchanged team.feed_group.name %}
                     </div></div><br/>
