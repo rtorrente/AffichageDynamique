@@ -48,7 +48,8 @@ INSTALLED_APPS = [
     'crispy_forms',
     'anymail',
     'bootstrap_datepicker_plus',
-    'django_registration'
+    'django_registration',
+    'django_crontab'
 ]
 
 MIDDLEWARE = [
@@ -125,6 +126,11 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
+
+CRONJOBS = [
+    ('0 3 */5 * *', 'app.cron.delete_old_content'),
+    ('0 5 */5 * *', 'app.cron.delete_image_orphan')
+]
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
