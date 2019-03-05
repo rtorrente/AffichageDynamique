@@ -51,7 +51,7 @@
                 <li class="nav-item {% if request.resolver_match.url_name == 'list_screen' or request.resolver_match.url_name == 'view_screen' %}active{% endif %}">
                     <a class="nav-link" href="{% url "list_screen" %}">Ecran</a>
                 </li>
-                {% if moderate_count > 0 or user.is_superuser %}
+                {% if user.content_moderation_pending > 0 or user.is_superuser %}
                     <li class="nav-item {% if request.resolver_match.url_name == 'moderation_home' %}active{% endif %}">
                         <a class="nav-link" href="{% url "moderation_home" %}" style="color: red;">Modérer les contenus</a>
                     </li>
@@ -79,7 +79,7 @@
 <!-- Begin page content -->
 <main role="main" class="flex-shrink-0">
     <div class="container">
-        {% if moderate_count > 0 %}
+        {% if user.content_moderation_pending > 0 %}
             <div class="alert alert-warning" role="alert">
                 Du contenu est en attente de <a href="{% url "moderation_home" %}">modération</a>
             </div>

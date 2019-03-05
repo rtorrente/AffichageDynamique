@@ -20,13 +20,6 @@ validator = FileTypeValidator(
     allowed_types=['image/jpeg', 'image/png', 'application/pdf'], allowed_extensions=['.jpg', '.jpeg', '.png', '.pdf']
 )
 
-
-def render_specific(request, template, dict={}):  # Render qui indique si des contenus sont à modérer dans chaque page
-    count = Feed.objects.filter(moderator_group__in=request.user.groups.all()).filter(content_feed__state="P").filter(content_feed__is_valid=True).count()
-    dict.update({"moderate_count":count})
-    return render(request, template, dict)
-
-
 def ContentCreateImage(request):
     form = ContentFormImage(request.POST or None)
     if not request.user.is_superuser:
@@ -52,8 +45,7 @@ def ContentCreateImage(request):
         content.save()
         return redirect(reverse("content_list", args=[content.feed.pk]))
     else:
-        return render_specific(request, 'app/add_content.html', locals())
-
+        return render(request, 'app/add_content.html', locals())
 
 def ContentCreateYoutube(request):
     form = ContentFormYoutube(request.POST or None)
@@ -70,7 +62,7 @@ def ContentCreateYoutube(request):
         content.save()
         return redirect(reverse("content_list", args=[content.feed.pk]))
     else:
-        return render_specific(request, 'app/add_content.html', locals())
+        return render(request, 'app/add_content.html', locals())
 
 
 def ContentCreateUrl(request):
@@ -88,28 +80,28 @@ def ContentCreateUrl(request):
         content.save()
         return redirect(reverse("content_list", args=[content.feed.pk]))
     else:
-        return render_specific(request, 'app/add_content.html', locals())
+        return render(request, 'app/add_content.html', locals())
 
 def home(request):
     if request.user.is_superuser:
         feed = Feed.objects.order_by("feed_group")
     else:
         feed = Feed.objects.filter(submitter_group__in=request.user.groups.all()).order_by("feed_group")
-    return render_specific(request, 'app/feed_list.html', {'feed':feed})
+    return render(request, 'app/feed_list.html', {'feed': feed})
 
 def content_list(request, pk):
     feed = get_object_or_404(Feed, pk=pk)
     if feed.submitter_group not in request.user.groups.all() and not request.user.is_superuser and feed.moderator_group not in request.user.groups.all():
         return HttpResponseForbidden()
     content = Content.objects.filter(feed=feed).filter(is_valid=True).order_by('-end_date')
-    return render_specific(request, 'app/content_list.html', {"content": content})
+    return render(request, 'app/content_list.html', {"content": content})
 
 def content_list_moderate(request, pk):
     feed = get_object_or_404(Feed, pk=pk)
     if feed.submitter_group not in request.user.groups.all() and not request.user.is_superuser and feed.moderator_group not in request.user.groups.all():
         return HttpResponseForbidden()
     content = Content.objects.filter(feed=feed).filter(is_valid=True).filter(state="P").order_by('begin_date')
-    return render_specific(request, 'app/content_list.html', {"content": content})
+    return render(request, 'app/content_list.html', {"content": content})
 
 def moderation_home(request):
     if request.user.is_superuser:
@@ -117,7 +109,7 @@ def moderation_home(request):
     else:
         feed = Feed.objects.filter(content_feed__state="P").filter(
             moderator_group__in=request.user.groups.all()).distinct()
-    return render_specific(request, 'app/moderation_home.html', {"feed": feed})
+    return render(request, 'app/moderation_home.html', {"feed": feed})
 
 def content_view(request, pk):
     content = get_object_or_404(Content, pk=pk)
@@ -125,7 +117,7 @@ def content_view(request, pk):
     if content.feed.submitter_group not in request.user.groups.all() and not request.user.is_superuser and content.feed.moderator_group not in request.user.groups.all():
         return HttpResponseForbidden()
     image = Image.objects.filter(content=content)
-    return render_specific(request, 'app/content_view.html', {"content": content, "images": image, "form": form})
+    return render(request, 'app/content_view.html', {"content": content, "images": image, "form": form})
 
 def approve_content(request,pk):
     content = get_object_or_404(Content,pk=pk)
@@ -280,7 +272,7 @@ def add_subscription(request, pk_screen, type_sub):
         form.instance.screen = screen
         form.save()
         return redirect(reverse("view_screen", args=[screen.pk]))
-    return render_specific(request, 'app/add_subscription.html', {"form": form, "screen": screen, "type_sub": type_sub})
+    return render(request, 'app/add_subscription.html', {"form": form, "screen": screen, "type_sub": type_sub})
 
 
 @csrf_exempt

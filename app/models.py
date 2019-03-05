@@ -1,12 +1,14 @@
+from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
-from django.contrib.auth.models import User
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import Group
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils import timezone
 
 from AffichageDynamique import settings
+
+User = get_user_model()
 
 CONTENT_TYPE = [
     ('I', "Image uploadée"),
@@ -35,8 +37,6 @@ DAY_TYPE = [
     (7, "Dimanche"),
 ]
 
-# Create your models here.
-
 
 @receiver(post_save, sender=User)  # Ajout d'un groupe par défaut à la création d'un user si défini dans la config
 def create_user_profile(sender, instance, created, **kwargs):
@@ -46,6 +46,18 @@ def create_user_profile(sender, instance, created, **kwargs):
             if group is not None:
                 instance.groups.add(group)
 
+
+# Début surcharge model user
+def user_content_moderation_pending(self):  # Permet de savoir si l'utilisateur a du contenu à modérer
+    return Feed.objects.filter(moderator_group__in=self.groups.all()).filter(content_feed__state="P").filter(
+        content_feed__is_valid=True).count()
+
+
+User.add_to_class('content_moderation_pending',
+                  user_content_moderation_pending)  # On ajoute cette classe à l'User Model
+
+
+# FIN surcharge model user
 
 class HourGroup(models.Model):
     name = models.CharField(verbose_name="Nom du groupe horaire", blank=False, null=False, max_length=255)
@@ -72,7 +84,6 @@ class Place(models.Model):
         return self.name
 
 
-
 class FeedGroup(models.Model):
     name = models.CharField(verbose_name='Nom du groupe de flux', blank=False, max_length=255, null=False)
 
@@ -81,6 +92,7 @@ class FeedGroup(models.Model):
 
     def count_feed(self, group):
         return int(Feed.objects.filter(owner_group=group).filter(feed_group=self).count())
+
 
 class Feed(models.Model):
     name = models.CharField(verbose_name='Nom du flux', blank=False, max_length=255, null=False)
@@ -99,6 +111,7 @@ class Feed(models.Model):
                 sum = sum + 1
         return sum
 
+
 class Screen(models.Model):
     token = models.CharField(unique=True, max_length=32)
     name = models.CharField(verbose_name="Nom de l'écran", blank=False, max_length=255, null=False)
@@ -114,6 +127,7 @@ class Screen(models.Model):
     ip = models.GenericIPAddressField(blank=True, null=True)
     hidden = models.BooleanField(default=False)
     place_group = models.ForeignKey(Place, null=True, on_delete=models.SET_NULL)
+
     def __str__(self):
         return self.name
 
@@ -136,6 +150,7 @@ class Screen(models.Model):
         else:  # Si aucune place group n'est définie, on laisse l'écran allumé
             return 1
 
+
 class Subscription(models.Model):
     screen = models.ForeignKey(Screen, on_delete=models.CASCADE, null=True, blank=True)
     feed = models.ForeignKey(Feed, on_delete=models.CASCADE, null=True, blank=True)
@@ -143,6 +158,7 @@ class Subscription(models.Model):
     priority = models.IntegerField(verbose_name="Priorité")
     def __str__(self):
         return self.feed.name + ' - ' + self.screen.name
+
 
 class Content(models.Model):
     name = models.CharField(verbose_name='Nom du contenu', blank=False, max_length=255, null=False)
@@ -159,20 +175,24 @@ class Content(models.Model):
 
     def __str__(self):
         return self.name
+
     @property
     def future(self):
         d = timezone.now()
         return d < self.begin_date
+
     @property
     def past(self):
         d = timezone.now()
         return d > self.end_date
+
     @property
     def active(self):
         if self.state == 'A' and not self.future and not self.past:
             return True
         else:
             return False
+
     @property
     def get_first_content_url(self):
         if self.content_type == "I":
@@ -186,11 +206,14 @@ class Content(models.Model):
         elif self.content_type == "U":
             return settings.STATIC_URL + "url.png"
 
+
 class Image(models.Model):
     image = models.ImageField(upload_to='contents')
     content = models.ForeignKey(Content, related_name="images", on_delete=models.CASCADE)
+
     def __str__(self):
         return self.content.name + " - Image id " + str(self.pk)
+
     @property
     def get_image_url(self):
         return settings.MEDIA_URL + str(self.image)
