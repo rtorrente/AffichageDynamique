@@ -3,6 +3,8 @@ volumes:
   affichageDynamique-database:
   affichageDynamique-staticfiles:
   affichageDynamique-media:
+  affichageDynamique-ssl_data:
+  affichageDynamique-nginx:
 networks:
   main:
 services:
@@ -32,12 +34,18 @@ services:
         aliases:
         - app
   affichageDynamique-assets:
-    image: rtorrente65/django_nginx_proxy
-    volumes:
-    - affichageDynamique-media:/app/media
-    - affichageDynamique-staticfiles:/app/staticfiles
+    image: valian/docker-nginx-auto-ssl
     ports:
     - 80:80
+    - 443:443
+    volumes:
+    - affichageDynamique-ssl_data:/etc/resty-auto-ssl
+    - affichageDynamique-media:/app/media
+    - affichageDynamique-staticfiles:/app/staticfiles
+    - affichageDynamique-nginx:/etc/nginx/conf.d
+    environment:
+      ALLOWED_DOMAINS: 'affichage-test.bde-insa-lyon.fr'
+      FORCE_HTTPS: true
     tty: true
     restart: always
     depends_on:
