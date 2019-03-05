@@ -1,7 +1,7 @@
 FROM python:3.7
 EXPOSE 8000
 
-RUN apt-get update && apt-get install -y ghostscript imagemagick libfreetype6
+RUN apt-get update && apt-get install -y ghostscript imagemagick libfreetype6 cron
 
 WORKDIR /app
 COPY requirements.txt /app
