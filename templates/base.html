@@ -67,7 +67,8 @@
                      <i class="far fa-user"> {{ user.first_name }} {{ user.last_name }}</i>
                 </button>
                 <div class="dropdown-menu">
-                    <a class="dropdown-item" href="#"><i class="fas fa-user-edit"></i> Mon compte</a>
+                    <a class="dropdown-item" href="{% url "edit_user" %}"><i class="fas fa-user-edit"></i> Mon
+                        compte</a>
                     <a class="dropdown-item" href="{% url "logout"%}" style="color: red"><i class="fas fa-user-lock"></i> Déconnexion</a>
                 </div>
             </div>

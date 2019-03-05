@@ -1,3 +1,4 @@
+from django.contrib.auth import get_user_model
 from django.core.mail import send_mail
 from django.forms import HiddenInput
 from django.http import HttpResponseForbidden, HttpResponse
@@ -5,9 +6,10 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
+from django.views.generic.edit import UpdateView
 from upload_validator import FileTypeValidator
 
 from AffichageDynamique import settings
@@ -16,9 +18,21 @@ from .forms import ContentFormImage, RejectContentForm, ScreenMonitoringEndpoint
     ContentFormUrl
 from .models import Feed, Content, Subscription, Screen, Image
 
+User = get_user_model()
+
 validator = FileTypeValidator(
     allowed_types=['image/jpeg', 'image/png', 'application/pdf'], allowed_extensions=['.jpg', '.jpeg', '.png', '.pdf']
 )
+
+
+class UserUpdate(UpdateView):
+    model = User
+    fields = ['first_name', 'last_name', 'email']
+    template_name = 'registration/user_update.html'
+    success_url = reverse_lazy('home')
+
+    def get_object(self):
+        return self.request.user
 
 def ContentCreateImage(request):
     form = ContentFormImage(request.POST or None)
