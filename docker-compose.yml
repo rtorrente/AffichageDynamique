@@ -25,7 +25,7 @@ services:
     volumes:
     - affichageDynamique-staticfiles:/app/staticfiles
     - affichageDynamique-media:/app/media
-    - affichageDynamique-nginx:/app/scripts/nginx
+    - affichageDynamique-nginx:/app/scripts/nginx/default-prod.conf
     tty: true
     depends_on:
     - affichageDynamique-db
@@ -42,7 +42,7 @@ services:
     - affichageDynamique-ssl_data:/etc/resty-auto-ssl
     - affichageDynamique-media:/app/media
     - affichageDynamique-staticfiles:/app/staticfiles
-    - affichageDynamique-nginx:/etc/nginx/conf.d
+    - affichageDynamique-nginx:/etc/nginx/conf.d/default.conf
     environment:
       ALLOWED_DOMAINS: 'affichage-test.bde-insa-lyon.fr'
       FORCE_HTTPS: true

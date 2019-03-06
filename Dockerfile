@@ -7,6 +7,7 @@ WORKDIR /app
 COPY requirements.txt /app
 RUN pip3 install -r requirements.txt
 COPY . /app
+COPY /app/scripts/nginx/default.conf /app/scripts/nginx/default-prod.conf
 RUN mkdir /app/tmp
 ENV DATABASE_URL postgres://ad@db/ad
 ENV SECRET_KEY ''
