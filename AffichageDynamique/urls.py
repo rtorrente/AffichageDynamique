@@ -22,8 +22,6 @@ from AffichageDynamique import settings
 from app.forms import UserProfileRegistrationForm
 from app.views import UserUpdate
 
-handler403 = 'app.views.permission_denied'
-
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/register/', RegistrationView.as_view(form_class=UserProfileRegistrationForm),

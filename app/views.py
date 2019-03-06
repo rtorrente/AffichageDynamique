@@ -36,9 +36,6 @@ class UserUpdate(UpdateView):
         return self.request.user
 
 
-def permission_denied(request):
-    return render(request, 'errors/error_base.html')
-
 def ContentCreateImage(request):
     form = ContentFormImage(request.POST or None)
     if not request.user.is_superuser:
@@ -277,7 +274,7 @@ def down_subscription(request, pk_sub):
 def add_subscription(request, pk_screen, type_sub):
     screen = get_object_or_404(Screen, pk=pk_screen)
     if not request.user.is_superuser and screen.owner_group not in request.user.groups.all():
-        return HttpResponseForbidden()
+        raise PermissionDenied
     form = SubscriptionForm(request.POST or None)
     if type_sub == "U":
         form.fields["priority"].initial = 1
@@ -286,7 +283,7 @@ def add_subscription(request, pk_screen, type_sub):
         form.fields["feed"].queryset = Feed.objects.filter(submitter_group__in=request.user.groups.all())
     if form.is_valid():
         if not type_sub == "N" and not type_sub == "U":
-            return HttpResponseForbidden()
+            raise PermissionDenied
         form.instance.subscription_type = type_sub
         form.instance.screen = screen
         form.save()
