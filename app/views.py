@@ -34,6 +34,10 @@ class UserUpdate(UpdateView):
     def get_object(self):
         return self.request.user
 
+
+def permission_denied(request):
+    return render(request, 'errors/error_base.html')
+
 def ContentCreateImage(request):
     form = ContentFormImage(request.POST or None)
     if not request.user.is_superuser:

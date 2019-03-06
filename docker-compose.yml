@@ -17,7 +17,7 @@ services:
       MAILGUN_KEY:
       MAILGUN_DOMAIN: mg.bde-insa-lyon.fr
       DEFAULT_FROM_EMAIL: affichage@mg.bde-insa-lyon.fr
-      DEFAULT_GROUP_PK: 0
+      DEFAULT_GROUP_PK: 6
     stdin_open: true
     restart: always
     expose:
