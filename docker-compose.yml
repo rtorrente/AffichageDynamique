@@ -18,6 +18,7 @@ services:
       MAILGUN_DOMAIN: mg.bde-insa-lyon.fr
       DEFAULT_FROM_EMAIL: affichage@mg.bde-insa-lyon.fr
       DEFAULT_GROUP_PK: 6
+      ALLOWED_HOSTS: "affichage.bde-insa-lyon.fr"
     stdin_open: true
     restart: always
     expose:

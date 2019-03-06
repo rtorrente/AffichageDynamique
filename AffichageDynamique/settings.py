@@ -27,12 +27,10 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'o1(en$lqa0@k*#we79=ooqpuk#%wzqgj2qk!^t43px
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DJANGO_ENV', 'dev') == 'dev'
 
-ALLOWED_HOSTS = ['affichage.bde-insa-lyon.fr']
+ALLOWED_HOSTS = [os.getenv('ALLOWED_HOSTS', "affichage.bde-insa-lyon.fr")]
 if DEBUG:
     ALLOWED_HOSTS.extend(['127.0.0.1'])
     ALLOWED_HOSTS.extend(['localhost'])
-    ALLOWED_HOSTS.extend(['affichage.test.bde-insa-lyon.fr'])
-    ALLOWED_HOSTS.extend(['affichage-test.bde-insa-lyon.fr'])
 
 
 # Application definition

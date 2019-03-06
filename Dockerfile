@@ -15,5 +15,6 @@ ENV MAILGUN_KEY ''
 ENV MAILGUN_DOMAIN ''
 ENV DEFAULT_FROM_EMAIL ''
 ENV DEFAULT_GROUP_PK 0
+ENV ALLOWED_HOSTS "affichage.bde-insa-lyon.fr"
 RUN chmod +x bash/run-prod.sh
 CMD bash/run-prod.sh
