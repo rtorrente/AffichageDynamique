@@ -1,7 +1,8 @@
 from django.contrib.auth import get_user_model
+from django.core.exceptions import PermissionDenied
 from django.core.mail import send_mail
 from django.forms import HiddenInput
-from django.http import HttpResponseForbidden, HttpResponse
+from django.http import HttpResponse
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render, redirect
@@ -117,7 +118,7 @@ def content_list(request, pk):
 def content_list_moderate(request, pk):
     feed = get_object_or_404(Feed, pk=pk)
     if feed.submitter_group not in request.user.groups.all() and not request.user.is_superuser and feed.moderator_group not in request.user.groups.all():
-        return HttpResponseForbidden()
+        raise PermissionDenied
     content = Content.objects.filter(feed=feed).filter(is_valid=True).filter(state="P").order_by('begin_date')
     return render(request, 'app/content_list.html', {"content": content})
 
