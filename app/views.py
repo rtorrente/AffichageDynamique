@@ -36,7 +36,7 @@ class UserUpdate(UpdateView):
 
 
 def denied(request):
-    return render(request, "app/denied.html")
+    return render(request, "denied.html")
 
 def ContentCreateImage(request):
     form = ContentFormImage(request.POST or None)
