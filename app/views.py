@@ -59,7 +59,7 @@ def ContentCreateImage(request):
             image_worker.resize_img(tmp_url, content)
         if content.feed.moderator_group in request.user.groups.all() or request.user.is_superuser: #Si l'utilisateur est modérateur ou admin on modére directement
             content.state="A"
-        content.is_valid=True
+        content.is_valid = True
         content.save()
         return redirect(reverse("content_list", args=[content.feed.pk]))
     else:
@@ -110,14 +110,14 @@ def home(request):
 def content_list(request, pk):
     feed = get_object_or_404(Feed, pk=pk)
     if feed.submitter_group not in request.user.groups.all() and not request.user.is_superuser and feed.moderator_group not in request.user.groups.all():
-        return denied()
+        return denied(request)
     content = Content.objects.filter(feed=feed).filter(is_valid=True).order_by('-end_date')
     return render(request, 'app/content_list.html', {"content": content})
 
 def content_list_moderate(request, pk):
     feed = get_object_or_404(Feed, pk=pk)
     if feed.submitter_group not in request.user.groups.all() and not request.user.is_superuser and feed.moderator_group not in request.user.groups.all():
-        return denied()
+        return denied(request)
     content = Content.objects.filter(feed=feed).filter(is_valid=True).filter(state="P").order_by('begin_date')
     return render(request, 'app/content_list.html', {"content": content})
 
@@ -133,14 +133,14 @@ def content_view(request, pk):
     content = get_object_or_404(Content, pk=pk)
     form = RejectContentForm(None)
     if content.feed.submitter_group not in request.user.groups.all() and not request.user.is_superuser and content.feed.moderator_group not in request.user.groups.all():
-        return denied()
+        return denied(request)
     image = Image.objects.filter(content=content)
     return render(request, 'app/content_view.html', {"content": content, "images": image, "form": form})
 
 def approve_content(request,pk):
     content = get_object_or_404(Content,pk=pk)
     if not request.user.is_superuser and content.feed.moderator_group not in request.user.groups.all(): #Modo ou SuperAd
-        return denied()
+        return denied(request)
     content.state='A'
     content.save()
     msg_plain = render_to_string('app/email_approved.txt', {'user': content.user, 'content': content})
@@ -157,7 +157,7 @@ def reject_content(request, pk):
     if form.is_valid():
         content = get_object_or_404(Content, pk=pk)
         if not request.user.is_superuser and content.feed.moderator_group not in request.user.groups.all():  # Modo ou SuperAd
-            return denied()
+            return denied(request)
         content.state='R'
         content.save()
         message = form.cleaned_data['reason']
@@ -239,7 +239,7 @@ def list_screen(request):
 def view_screen(request, pk_screen):
     screen = get_object_or_404(Screen, pk=pk_screen)
     if not request.user.is_superuser and screen.hidden and screen.owner_group not in request.user.groups.all():
-        return denied()
+        return denied(request)
     urgent = Subscription.objects.filter(screen=screen).filter(subscription_type="U").order_by("-priority")
     normal = Subscription.objects.filter(screen=screen).filter(subscription_type="N").order_by("-priority")
     return render(request, 'app/view_screen.html',
@@ -249,7 +249,7 @@ def view_screen(request, pk_screen):
 def delete_subscription(request, pk_sub):
     subscription = get_object_or_404(Subscription, pk=pk_sub)
     if not request.user.is_superuser and subscription.screen.owner_group not in request.user.groups.all():
-        return denied()
+        return denied(request)
     subscription.delete()
     return redirect(reverse("view_screen", args=[subscription.screen.pk]))
 
@@ -257,7 +257,7 @@ def delete_subscription(request, pk_sub):
 def up_subscription(request, pk_sub):
     subscription = get_object_or_404(Subscription, pk=pk_sub)
     if not request.user.is_superuser and subscription.screen.owner_group not in request.user.groups.all():
-        return denied()
+        return denied(request)
     if subscription.priority < 10:
         subscription.priority += 1
         subscription.save()
@@ -267,7 +267,7 @@ def up_subscription(request, pk_sub):
 def down_subscription(request, pk_sub):
     subscription = get_object_or_404(Subscription, pk=pk_sub)
     if not request.user.is_superuser and subscription.screen.owner_group not in request.user.groups.all():
-        return denied()
+        return denied(request)
     if subscription.priority > 1:
         subscription.priority -= 1
         subscription.save()
@@ -276,7 +276,7 @@ def down_subscription(request, pk_sub):
 def add_subscription(request, pk_screen, type_sub):
     screen = get_object_or_404(Screen, pk=pk_screen)
     if not request.user.is_superuser and screen.owner_group not in request.user.groups.all():
-        return denied()
+        return denied(request)
     form = SubscriptionForm(request.POST or None)
     if type_sub == "U":
         form.fields["priority"].initial = 1
@@ -285,7 +285,7 @@ def add_subscription(request, pk_screen, type_sub):
         form.fields["feed"].queryset = Feed.objects.filter(submitter_group__in=request.user.groups.all())
     if form.is_valid():
         if not type_sub == "N" and not type_sub == "U":
-            return denied()
+            return denied(request)
         form.instance.subscription_type = type_sub
         form.instance.screen = screen
         form.save()
