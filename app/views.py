@@ -1,5 +1,4 @@
 from django.contrib.auth import get_user_model
-from django.core.exceptions import PermissionDenied
 from django.core.mail import send_mail
 from django.forms import HiddenInput
 from django.http import HttpResponse
@@ -277,7 +276,7 @@ def down_subscription(request, pk_sub):
 def add_subscription(request, pk_screen, type_sub):
     screen = get_object_or_404(Screen, pk=pk_screen)
     if not request.user.is_superuser and screen.owner_group not in request.user.groups.all():
-        raise PermissionDenied
+        return denied()
     form = SubscriptionForm(request.POST or None)
     if type_sub == "U":
         form.fields["priority"].initial = 1
@@ -286,7 +285,7 @@ def add_subscription(request, pk_screen, type_sub):
         form.fields["feed"].queryset = Feed.objects.filter(submitter_group__in=request.user.groups.all())
     if form.is_valid():
         if not type_sub == "N" and not type_sub == "U":
-            raise PermissionDenied
+            return denied()
         form.instance.subscription_type = type_sub
         form.instance.screen = screen
         form.save()
