@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="fr">
 
@@ -7,13 +8,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 
-    <title>500 Erreur Serveur</title>
+    <title>404 Not Found</title>
 
     <!-- Google font -->
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700,900" rel="stylesheet">
 
     <!-- Custom stlylesheet -->
-    <link type="text/css" rel="stylesheet" href="/static/error/css/style.css"/>
+    <link type="text/css" rel="stylesheet" href="{% static 'css/style-error.css' %}"/>
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -31,8 +32,9 @@
         <div class="notfound-404">
             <h1>Oops!</h1>
         </div>
-        <h2>500 - Erreur Serveur</h2>
-        <p>Un erreur est survenue au cours du chargement de la page. Merci de contacter le support.</p>
+        <h2>403 - Non autorisé</h2>
+        <p>La page demandée n'est pas accessible avec les autorisations de votre compte utilisateur. Avez-vous le droit
+            d'être ici ?</p>
         <a href="/">Retour à l'accueil</a>
     </div>
 </div>

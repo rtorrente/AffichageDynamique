@@ -36,6 +36,9 @@ class UserUpdate(UpdateView):
         return self.request.user
 
 
+def denied(request):
+    return render(request, "app/denied.html")
+
 def ContentCreateImage(request):
     form = ContentFormImage(request.POST or None)
     if not request.user.is_superuser:
@@ -108,14 +111,14 @@ def home(request):
 def content_list(request, pk):
     feed = get_object_or_404(Feed, pk=pk)
     if feed.submitter_group not in request.user.groups.all() and not request.user.is_superuser and feed.moderator_group not in request.user.groups.all():
-        return HttpResponseForbidden()
+        return denied()
     content = Content.objects.filter(feed=feed).filter(is_valid=True).order_by('-end_date')
     return render(request, 'app/content_list.html', {"content": content})
 
 def content_list_moderate(request, pk):
     feed = get_object_or_404(Feed, pk=pk)
     if feed.submitter_group not in request.user.groups.all() and not request.user.is_superuser and feed.moderator_group not in request.user.groups.all():
-        raise PermissionDenied
+        return denied()
     content = Content.objects.filter(feed=feed).filter(is_valid=True).filter(state="P").order_by('begin_date')
     return render(request, 'app/content_list.html', {"content": content})
 
@@ -131,14 +134,14 @@ def content_view(request, pk):
     content = get_object_or_404(Content, pk=pk)
     form = RejectContentForm(None)
     if content.feed.submitter_group not in request.user.groups.all() and not request.user.is_superuser and content.feed.moderator_group not in request.user.groups.all():
-        return HttpResponseForbidden()
+        return denied()
     image = Image.objects.filter(content=content)
     return render(request, 'app/content_view.html', {"content": content, "images": image, "form": form})
 
 def approve_content(request,pk):
     content = get_object_or_404(Content,pk=pk)
     if not request.user.is_superuser and content.feed.moderator_group not in request.user.groups.all(): #Modo ou SuperAd
-        return HttpResponseForbidden()
+        return denied()
     content.state='A'
     content.save()
     msg_plain = render_to_string('app/email_approved.txt', {'user': content.user, 'content': content})
@@ -155,7 +158,7 @@ def reject_content(request, pk):
     if form.is_valid():
         content = get_object_or_404(Content, pk=pk)
         if not request.user.is_superuser and content.feed.moderator_group not in request.user.groups.all():  # Modo ou SuperAd
-            return HttpResponseForbidden()
+            return denied()
         content.state='R'
         content.save()
         message = form.cleaned_data['reason']
@@ -237,7 +240,7 @@ def list_screen(request):
 def view_screen(request, pk_screen):
     screen = get_object_or_404(Screen, pk=pk_screen)
     if not request.user.is_superuser and screen.hidden and screen.owner_group not in request.user.groups.all():
-        return HttpResponseForbidden()
+        return denied()
     urgent = Subscription.objects.filter(screen=screen).filter(subscription_type="U").order_by("-priority")
     normal = Subscription.objects.filter(screen=screen).filter(subscription_type="N").order_by("-priority")
     return render(request, 'app/view_screen.html',
@@ -247,7 +250,7 @@ def view_screen(request, pk_screen):
 def delete_subscription(request, pk_sub):
     subscription = get_object_or_404(Subscription, pk=pk_sub)
     if not request.user.is_superuser and subscription.screen.owner_group not in request.user.groups.all():
-        return HttpResponseForbidden()
+        return denied()
     subscription.delete()
     return redirect(reverse("view_screen", args=[subscription.screen.pk]))
 
@@ -255,7 +258,7 @@ def delete_subscription(request, pk_sub):
 def up_subscription(request, pk_sub):
     subscription = get_object_or_404(Subscription, pk=pk_sub)
     if not request.user.is_superuser and subscription.screen.owner_group not in request.user.groups.all():
-        return HttpResponseForbidden()
+        return denied()
     if subscription.priority < 10:
         subscription.priority += 1
         subscription.save()
@@ -265,7 +268,7 @@ def up_subscription(request, pk_sub):
 def down_subscription(request, pk_sub):
     subscription = get_object_or_404(Subscription, pk=pk_sub)
     if not request.user.is_superuser and subscription.screen.owner_group not in request.user.groups.all():
-        return HttpResponseForbidden()
+        return denied()
     if subscription.priority > 1:
         subscription.priority -= 1
         subscription.save()
