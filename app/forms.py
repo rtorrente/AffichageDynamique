@@ -1,4 +1,5 @@
 from bootstrap_datepicker_plus import DateTimePickerInput
+from captcha.fields import ReCaptchaField
 from django import forms
 from django.contrib.auth.models import User
 from django.utils import timezone
@@ -12,6 +13,7 @@ class UserProfileRegistrationForm(RegistrationForm):
     last_name = forms.CharField(label='Nom', required=True)
     password1 = forms.CharField(widget=forms.PasswordInput, label="Mot de passe")
     password2 = forms.CharField(widget=forms.PasswordInput, label="Confirmation du mot de passe")
+    captcha = ReCaptchaField(label="Êtes-vous un robot ?")
 
     class Meta:
         model = User

@@ -47,7 +47,8 @@ INSTALLED_APPS = [
     'anymail',
     'bootstrap_datepicker_plus',
     'django_registration',
-    'django_crontab'
+    'django_crontab',
+    'captcha'
 ]
 
 MIDDLEWARE = [
@@ -59,6 +60,9 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+# Verifier que les clés de test du captcha ne sont pas utilisées
+SILENCED_SYSTEM_CHECKS = ['captcha.recaptcha_test_key_error']
 
 ROOT_URLCONF = 'AffichageDynamique.urls'
 
@@ -150,3 +154,6 @@ ANYMAIL = {
 
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL',"affichage@mg.bde-insa-lyon.fr")
 DEFAULT_GROUP_PK = os.getenv('DEFAULT_GROUP_PK', 0)
+
+RECAPTCHA_PUBLIC_KEY = os.getenv('RECAPTCHA_PUBLIC_KEY')
+RECAPTCHA_PRIVATE_KEY = os.getenv('RECAPTCHA_PRIVATE_KEY')
