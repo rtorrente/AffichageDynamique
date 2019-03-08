@@ -19,6 +19,8 @@ services:
       DEFAULT_FROM_EMAIL: affichage@mg.bde-insa-lyon.fr
       DEFAULT_GROUP_PK: 6
       ALLOWED_HOSTS: "affichage.bde-insa-lyon.fr"
+      RECAPTCHA_PUBLIC_KEY:
+      RECAPTCHA_PRIVATE_KEY:
     stdin_open: true
     restart: always
     expose:
