@@ -283,6 +283,9 @@ def add_subscription(request, pk_screen, type_sub):
         form.fields["priority"].widget = HiddenInput()
     if not request.user.is_superuser:
         form.fields["feed"].queryset = Feed.objects.filter(submitter_group__in=request.user.groups.all())
+    actuel = Subscription.objects.filter(screen=screen).filter(subscription_type=type_sub)
+    print(actuel)
+    form.fields["feed"].queryset = form.fields["feed"].queryset.exclude(pk__in=[feed.feed.pk for feed in actuel])
     if form.is_valid():
         if not type_sub == "N" and not type_sub == "U":
             return denied(request)
