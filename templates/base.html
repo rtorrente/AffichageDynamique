@@ -58,6 +58,11 @@
                         <a class="nav-link" href="{% url "moderation_home" %}" style="color: red;">Modérer les contenus</a>
                     </li>
                 {% endif %}
+                {% if user.is_superuser %}
+                    <li class="nav-item {% if request.resolver_match.url_name == 'screen_monitoring' %}active{% endif %}">
+                        <a class="nav-link" href="{% url "screen_monitoring" %}">Monitoring Screen</a>
+                    </li>
+                {% endif %}
                 {% if user.is_staff %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url "admin:index" %}" style="color: red;">Administration Django</a>

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">Nom</th>
+                <th scope="col">Hostname</th>
+                <th scope="col">Température</th>
+                <th scope="col">Load</th>
+                <th scope="col">ReadOnly FS</th>
+                <th scope="col">Etat Ecran</th>
+                <th scope="col">Dernier appel Json<br><i>Dernier Monitoring</i></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for content_detail in screen %}
+                <tr>
+                    <td><a href="{% url "view_screen" content_detail.pk %}">{{ content_detail.name }}</a></td>
+                    <td>{{ content_detail.hostname }}<br/><i>{{ content_detail.ip }}</i></td>
+                    <td>{{ content_detail.temperature }} °C</td>
+                    <td>{{ content_detail.load }}</td>
+                    <td>{{ content_detail.fs_ro }}</td>
+                    <td>{{ content_detail.tv_screen_on }}</td>
+                    <td>{{ content_detail.date_last_call }}<br/><i>{{ content_detail.date_last_monitoring }}</i></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

@@ -314,3 +314,10 @@ def screen_monitoring_endpoint(request):
         return HttpResponse(3)
     except:
         return HttpResponse(3)  # Si l'écran n'est pas encore enregistré
+
+
+def screen_monitoring(request):
+    if not request.user.is_superuser:
+        return denied(request)
+    screen = Screen.objects.all()
+    return render(request, "app/screen_monitoring.html", {"screen": screen})
