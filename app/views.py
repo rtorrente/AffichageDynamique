@@ -319,5 +319,5 @@ def screen_monitoring_endpoint(request):
 def screen_monitoring(request):
     if not request.user.is_superuser:
         return denied(request)
-    screen = Screen.objects.all().order_by("place_group")
+    screen = Screen.objects.order_by("place_group", "pk")
     return render(request, "app/screen_monitoring.html", {"screen": screen})
