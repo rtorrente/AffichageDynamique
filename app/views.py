@@ -38,6 +38,7 @@ class UserUpdate(UpdateView):
 def denied(request):
     return render(request, "denied.html")
 
+
 def ContentCreateImage(request):
     form = ContentFormImage(request.POST or None)
     if not request.user.is_superuser:
@@ -64,6 +65,7 @@ def ContentCreateImage(request):
         return redirect(reverse("content_list", args=[content.feed.pk]))
     else:
         return render(request, 'app/add_content.html', locals())
+
 
 def ContentCreateYoutube(request):
     form = ContentFormYoutube(request.POST or None)
@@ -100,12 +102,14 @@ def ContentCreateUrl(request):
     else:
         return render(request, 'app/add_content.html', locals())
 
+
 def home(request):
     if request.user.is_superuser:
         feed = Feed.objects.order_by("feed_group")
     else:
         feed = Feed.objects.filter(submitter_group__in=request.user.groups.all()).order_by("feed_group")
     return render(request, 'app/feed_list.html', {'feed': feed})
+
 
 def content_list(request, pk):
     feed = get_object_or_404(Feed, pk=pk)
@@ -114,12 +118,14 @@ def content_list(request, pk):
     content = Content.objects.filter(feed=feed).filter(is_valid=True).order_by('-end_date')
     return render(request, 'app/content_list.html', {"content": content})
 
+
 def content_list_moderate(request, pk):
     feed = get_object_or_404(Feed, pk=pk)
     if feed.submitter_group not in request.user.groups.all() and not request.user.is_superuser and feed.moderator_group not in request.user.groups.all():
         return denied(request)
     content = Content.objects.filter(feed=feed).filter(is_valid=True).filter(state="P").order_by('begin_date')
     return render(request, 'app/content_list.html', {"content": content})
+
 
 def moderation_home(request):
     if request.user.is_superuser:
@@ -129,6 +135,7 @@ def moderation_home(request):
             moderator_group__in=request.user.groups.all()).distinct()
     return render(request, 'app/moderation_home.html', {"feed": feed})
 
+
 def content_view(request, pk):
     content = get_object_or_404(Content, pk=pk)
     form = RejectContentForm(None)
@@ -136,6 +143,7 @@ def content_view(request, pk):
         return denied(request)
     image = Image.objects.filter(content=content)
     return render(request, 'app/content_view.html', {"content": content, "images": image, "form": form})
+
 
 def approve_content(request,pk):
     content = get_object_or_404(Content,pk=pk)
@@ -151,6 +159,7 @@ def approve_content(request,pk):
         [content.user.email],
     )
     return redirect(reverse("content_list_moderate", args=[content.feed.pk]))
+
 
 def reject_content(request, pk):
     form = RejectContentForm(request.POST or None)
@@ -172,6 +181,7 @@ def reject_content(request, pk):
         return redirect(reverse("content_list_moderate", args=[content.feed.pk]))
     else:
         return redirect(reverse("content_view", args=[pk]))
+
 
 def json_screen(request, token_screen):
     json = []
@@ -213,6 +223,7 @@ def json_screen(request, token_screen):
                         json.append(image)
     return JsonResponse(json,safe=False)
 
+
 def display(request, token_screen):
     try:
         screen = Screen.objects.get(token=token_screen)
@@ -227,12 +238,11 @@ def display(request, token_screen):
         return render(request, 'app/display_new_screen.html', {"token": token_screen})
 
 
-
 def list_screen(request):
     if request.user.is_superuser:
-        screen = Screen.objects.all()
+        screen = Screen.objects.order_by("name", "place_group")
     else:
-        screen = Screen.objects.filter(hidden=False)
+        screen = Screen.objects.filter(hidden=False).order_by("name", "place_group")
     return render(request, 'app/list_screen.html', {"screen": screen})
 
 
@@ -272,6 +282,7 @@ def down_subscription(request, pk_sub):
         subscription.priority -= 1
         subscription.save()
     return redirect(reverse("view_screen", args=[subscription.screen.pk]))
+
 
 def add_subscription(request, pk_screen, type_sub):
     screen = get_object_or_404(Screen, pk=pk_screen)
