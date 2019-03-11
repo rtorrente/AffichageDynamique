@@ -16,13 +16,14 @@ def delete_image_orphan():
         imagelist.append(string.replace("contents/", ""))
     for img in list:
         if img not in imagelist:
-            print(settings.MEDIA_ROOT + "/contents/" + img)
             os.remove(settings.MEDIA_ROOT + "/contents/" + img)
 
 
 def delete_old_content():
     date = timezone.now() - timezone.timedelta(days=7)
     content = Content.objects.filter(end_date__lt=date)
+    content.delete()
+    content = Content.objects.filter(state="R").filter(begin_date__lt=date)
     content.delete()
 
 
