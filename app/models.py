@@ -158,6 +158,13 @@ class Screen(models.Model):
         else:  # Si aucune place group n'est définie, on laisse l'écran allumé
             return 1
 
+    @property
+    def screen_is_off(self):
+        if not self.screen_need_on and not self.tv_screen_on:
+            return True
+        else:
+            return False
+
 
 class Subscription(models.Model):
     screen = models.ForeignKey(Screen, on_delete=models.CASCADE, null=True, blank=True)
