@@ -36,6 +36,14 @@ DAY_TYPE = [
     (7, "Dimanche"),
 ]
 
+SCREEN_CONTROL_TYPE = [
+    (1, "None"),
+    (2, "CEC RW"),
+    (3, "CEC RO"),
+    (4, "LG Serial"),
+    (5, "RPi TV Service")
+]
+
 
 @receiver(post_save, sender=User)  # Ajout d'un groupe par défaut à la création d'un user si défini dans la config
 def create_user_profile(sender, instance, created, **kwargs):
@@ -126,6 +134,7 @@ class Screen(models.Model):
     ip = models.GenericIPAddressField(blank=True, null=True)
     hidden = models.BooleanField(default=False)
     place_group = models.ForeignKey(Place, null=True, on_delete=models.SET_NULL)
+    screen_control_type = models.IntegerField(null=False, default=1, choices=SCREEN_CONTROL_TYPE)
 
     def __str__(self):
         return self.name

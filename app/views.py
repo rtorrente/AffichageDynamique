@@ -332,3 +332,11 @@ def screen_monitoring(request):
         return denied(request)
     screen = Screen.objects.order_by("name", "place_group")
     return render(request, "app/screen_monitoring.html", {"screen": screen})
+
+
+def screen_monitoring_get_control_mode(request, token):
+    try:
+        screen = Screen.objects.get(token=token)
+        return HttpResponse(screen.screen_control_type)
+    except:
+        return HttpResponse(1)

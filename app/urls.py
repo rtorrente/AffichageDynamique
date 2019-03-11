@@ -31,6 +31,8 @@ urlpatterns = [
     path('subscription/down/<int:pk_sub>', login_required(views.down_subscription), name='down_subscription'),
 
     # No Login
+    path('screen/monitoring_get_control_mode/<str:token>', views.screen_monitoring_get_control_mode,
+         name='screen_monitoring_get_control'),
     path('screen/json/<str:token_screen>', views.json_screen, name='json_screen'),
     path('display/<str:token_screen>', views.display, name='display'),
     path('screen/monitoring_endpoint/', views.screen_monitoring_endpoint, name='screen_monitoring_endpoint'),
