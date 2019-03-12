@@ -10,6 +10,10 @@ ENV DJANGO_ENV 'dev'
 ENV MAILGUN_KEY ''
 ENV MAILGUN_DOMAIN ''
 ENV DEFAULT_FROM_EMAIL ''
+ENV DEFAULT_GROUP_PK 0 #Pk du groupe ajouté automatiquement à chaque nouveau inscrit
+ENV ALLOWED_HOSTS "affichage.bde-insa-lyon.fr"
+ENV RECAPTCHA_PUBLIC_KEY ''
+ENV RECAPTCHA_PRIVATE_KEY ''
 ```
 ## Licence
 
