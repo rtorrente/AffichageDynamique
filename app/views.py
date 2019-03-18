@@ -205,6 +205,12 @@ def json_screen(request, token_screen):
                 elif img.content_type == "Y":
                     image = {'type': 'youtube', 'content': img.content_url, 'duration': int(img.duration)}
                     json.append(image)
+                elif img.content_type == "U":
+                    image = {'type': 'iframe', 'content': img.content_url, 'duration': int(img.duration)}
+                    json.append(image)
+                elif img.content_type == "Y":
+                    image = {'type': 'youtube', 'content': img.content_url, 'duration': int(img.duration)}
+                    json.append(image)
     if not urgent_active:
         subscription1 = Subscription.objects.filter(subscription_type="N").filter(screen=screen)
         for sub in subscription1:
