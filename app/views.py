@@ -329,10 +329,14 @@ def screen_monitoring_endpoint(request):
             screen.ip = form.cleaned_data['ip']
             screen.date_last_monitoring = timezone.now()
             screen.save()
-            return HttpResponse(screen.screen_need_on)
-        return HttpResponse(3)
+            last_monitoring = timezone.now() - timezone.timedelta(minutes=20)
+            if screen.date_last_call > last_monitoring:
+                return HttpResponse(screen.screen_need_on)
+            else:
+                return HttpResponse(3)
+        return HttpResponse(300)
     except:
-        return HttpResponse(3)  # Si l'écran n'est pas encore enregistré
+        return HttpResponse(300)  # Si l'écran n'est pas encore enregistré
 
 
 def screen_monitoring(request):
