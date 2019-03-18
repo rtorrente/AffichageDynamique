@@ -29,7 +29,8 @@
                                 {% endif %}
                             {% endif %}</h5>
                         <i class="far fa-calendar-alt"> {{ content_detail.begin_date }}
-                            - {{ content_detail.end_date }}</i><br/>
+                            - {{ content_detail.end_date }}
+                            ({{ content_detail.begin_date|timesince:content_detail.end_date }})</i><br/>
                         <i class="far fa-hourglass"> {{ content_detail.duration }}
                             seconde{{ content_detail.duration|pluralize }}</i><br/>
                         <i class="far fa-user"> {{ content_detail.user.first_name }} {{ content_detail.user.last_name }}</i>

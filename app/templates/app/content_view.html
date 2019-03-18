@@ -17,7 +17,10 @@
                 <li class="list-group-item text-muted" contenteditable="false">Détails</li>
                 <li class="list-group-item text-right"><span class="pull-left"><strong class="">Titre: </strong></span><br> {{ content.name }}</li>
                 <li class="list-group-item text-right"><span class="pull-left"><strong class="">Utilisateur : </strong></span><br> {{ content.user.first_name }} {{ content.user.last_name }}<br/>{{ content.user.email }}</li>
-                <li class="list-group-item text-right"><span class="pull-left"><strong class="">Dates : </strong></span> {{ content.begin_date }} - {{ content.end_date }}</li>
+                <li class="list-group-item text-right"><span class="pull-left"><strong
+                        class="">Dates : </strong></span> {{ content.begin_date }} - {{ content.end_date }}
+                    ({{ content.begin_date|timesince:content.end_date }})
+                </li>
                 <li class="list-group-item text-right"><span class="pull-left"><strong class="">Durée : </strong></span> {{ content.duration }} seconde{{ content.duration|pluralize }}</li>
                 <li class="list-group-item text-right"><span class="pull-left"><strong class="">Type : </strong></span>{{ content.content_type }}</li>
                 <li class="list-group-item text-right"><span class="pull-left"><strong class="">Statut : </strong></span><br>

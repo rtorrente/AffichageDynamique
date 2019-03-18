@@ -189,21 +189,23 @@ def json_screen(request, token_screen):
     screen.date_last_call = timezone.now()  # On enregistre l'appel au json (pour le monitoring)
     screen.save()
     urgent = Subscription.objects.filter(subscription_type="U").filter(screen=screen)
-    if urgent.count()>0:
-        for subscription in urgent:
-            feed = subscription.feed
-            content = feed.content_feed.all()
-            for img in content:
-                if img.active:
-                    if img.content_type=="I":
-                        image1 = img.images.all()
-                        for img1 in image1:
-                            image = {'type': 'image', 'content': str(img1.image), 'duration': int(img.duration/image1.count())}
-                            json.append(image)
-                    elif img.content_type=="Y":
-                        image = {'type': 'youtube', 'content': img.content_url, 'duration': int(img.duration)}
+    urgent_active = False
+    for subscription in urgent:
+        feed = subscription.feed
+        content = feed.content_feed.all()
+        for img in content:
+            if img.active:
+                urgent_active = True
+                if img.content_type == "I":
+                    image1 = img.images.all()
+                    for img1 in image1:
+                        image = {'type': 'image', 'content': str(img1.image),
+                                 'duration': int(img.duration / image1.count())}
                         json.append(image)
-    else:
+                elif img.content_type == "Y":
+                    image = {'type': 'youtube', 'content': img.content_url, 'duration': int(img.duration)}
+                    json.append(image)
+    if not urgent_active:
         subscription1 = Subscription.objects.filter(subscription_type="N").filter(screen=screen)
         for sub in subscription1:
             feed = sub.feed
@@ -340,3 +342,10 @@ def screen_monitoring_get_control_mode(request, token):
         return HttpResponse(screen.screen_control_type)
     except:
         return HttpResponse(1)
+
+
+class UserUpdate(UpdateView):
+    model = Content
+    fields = ['begin_date', 'end_date', 'duration']
+    template_name = 'registration/user_update.html'
+    # success_url = reverse_lazy('home', args=[self.request])
