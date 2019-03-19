@@ -17,7 +17,8 @@ def convert_pdf_to_img(file1, content):
             if img.height > 1080:
                 img.resize(height=1080)
             img.format = "png"
-            img.transparent_color(Color('#ffffff'), alpha=0.0)
+            img.background_color = Color('white')
+            img.alpha_channel = 'remove'
             stream_out = six.BytesIO()
             img.save(file=stream_out)
             picture = ImageModel()
