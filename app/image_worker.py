@@ -22,7 +22,7 @@ def convert_pdf_to_img(file1, content):
             img.save(file=stream_out)
             picture = ImageModel()
             picture.content = content
-            picture.image.save(name="content" + content.pk + ".png", content=stream_out)
+            picture.image.save(name="content" + str(content.pk) + ".png", content=stream_out)
             picture.save()
     os.remove(file1)
 
