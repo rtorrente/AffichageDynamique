@@ -132,9 +132,9 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 CRONJOBS = [
     ('0 3 * * *', 'app.cron.delete_old_content'),
     ('0 5 */3 * *', 'app.cron.delete_image_orphan'),
-    ('*/5 * * * *', 'app.cron.notify_moderation')
+    ('*/15 * * * *', 'app.cron.notify_moderation')
 ]
-CRONTAB_COMMAND_PREFIX = 'source /tmp/env.txt'
+CRONTAB_COMMAND_PREFIX = 'source /tmp/env.txt && '
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
