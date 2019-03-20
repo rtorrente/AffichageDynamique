@@ -354,7 +354,7 @@ def screen_monitoring_get_control_mode(request, token):
         return HttpResponse(1)
 
 
-class UserUpdate(UpdateView):
+class ContentUpdate(UpdateView):
     model = Content
     fields = ['begin_date', 'end_date', 'duration']
     template_name = 'registration/user_update.html'

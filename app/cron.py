@@ -25,6 +25,8 @@ def delete_old_content():
     content.delete()
     content = Content.objects.filter(state="R").filter(begin_date__lt=date)
     content.delete()
+    content = Content.objects.filter(is_valid=False).filter(submission_date__lt=date)
+    content.delete()
 
 
 def notify_old_user():
