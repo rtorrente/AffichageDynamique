@@ -1,3 +1,4 @@
+{% load app_filters %}
 {% extends "base.html" %}
 {% block content %}
     <div class="table-responsive">
@@ -20,8 +21,8 @@
                     <td>{{ content_detail.hostname }}<br/><i>{{ content_detail.ip }}</i></td>
                     <td>{{ content_detail.temperature }} °C</td>
                     <td>{{ content_detail.load }}</td>
-                    <td>{{ content_detail.fs_ro }}</td>
-                    <td>{{ content_detail.tv_screen_on }}</td>
+                    <td>{{ content_detail.fs_ro|iconbool }}</td>
+                    <td>{{ content_detail.tv_screen_on|iconbool }}</td>
                     <td>{{ content_detail.date_last_call }}<br/><i>{{ content_detail.date_last_monitoring }}</i></td>
                 </tr>
             {% endfor %}
