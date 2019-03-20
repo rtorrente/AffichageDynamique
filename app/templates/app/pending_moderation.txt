@@ -1,0 +1,9 @@
+{% autoescape off %}
+Bonjour {{ user.first_name }} {{ user.last_name }},
+
+Vous êtes modérateur du flux {{ feed.name }} et du contenu est en attente de validation.
+Rendez-vous sur le lien suivant pour modérer les contenus : https://{{ site }}{% url "moderation_home" %}
+
+Merci.
+
+{% endautoescape %}

@@ -1,9 +1,11 @@
 import os
 from django.contrib.auth import get_user_model
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
 from django.utils import timezone
 
 from AffichageDynamique import settings
-from .models import Image, Content
+from .models import Image, Content, Feed
 
 User = get_user_model()
 
@@ -33,3 +35,22 @@ def notify_old_user():
     date = timezone.now() - timezone.timedelta(days=365)
     user = User.objects.filter(last_login__lt=date).filter(is_active=True)
     print(user)
+
+
+def notify_moderation():
+    last = timezone.now() - timezone.timedelta(hours=12)
+    feed_list = Feed.objects.filter(content_feed__state="P").filter(content_feed__is_valid=True).filter(
+        date_last_moderation_email__lt=last).distinct()
+    for feed in feed_list:
+        user_list = User.objects.filter(groups=feed.moderator_group).distinct()
+        for user in user_list:
+            msg_plain = render_to_string('app/pending_moderation.txt',
+                                         {'user': user, 'site': settings.ALLOWED_HOSTS[0], 'feed': feed})
+            send_mail(
+                feed.name + " - Contenu à modérer",
+                msg_plain,
+                settings.DEFAULT_FROM_EMAIL,
+                [user.email],
+            )
+        feed.date_last_moderation_email = timezone.now()
+        feed.save()

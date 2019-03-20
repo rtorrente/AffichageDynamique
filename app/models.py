@@ -122,6 +122,7 @@ class Feed(models.Model):
     submitter_group = models.ForeignKey(Group, on_delete=models.SET_DEFAULT, default=1, related_name="feed_submitter")
     moderator_group = models.ForeignKey(Group, on_delete=models.SET_DEFAULT, default=1, related_name="feed_moderator")
     feed_group = models.ForeignKey(FeedGroup, on_delete=models.PROTECT, null=True, blank=True)
+    date_last_moderation_email = models.DateTimeField(editable=True, null=True)
     def __str__(self):
         return self.feed_group.name + " - " + self.name
     @property
