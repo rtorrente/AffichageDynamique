@@ -381,7 +381,7 @@ def RestaurantAdd(request):
                                                                timezone.datetime(1, 1, 1, hour=10).time())
                 content.end_date = timezone.datetime.combine(form.cleaned_data["date"],
                                                              timezone.datetime(1, 1, 1, hour=14).time())
-                content.feed = Feed.objects.get(pk=2)
+                content.feed = Feed.objects.get(pk=settings.RESTAURANTS_FEED_PK)
                 validator(request.FILES[i])
                 content.save()
                 tmp_url = settings.BASE_DIR + '/tmp/' + request.FILES[i].name
