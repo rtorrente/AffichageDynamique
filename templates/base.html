@@ -87,6 +87,11 @@
 <!-- Begin page content -->
 <main role="main" class="flex-shrink-0">
     <div class="container">
+        {% if user.user_is_restaurant %}
+            <div class="alert alert-primary" role="alert">
+                FONCTION SPECIALE RESTAURANTS <a href="{% url "add_restaurant" %}">Cliquer pour ajouter des menus</a>
+            </div>
+        {% endif %}
         {% if user.content_moderation_pending > 0 %}
             <div class="alert alert-warning" role="alert">
                 Du contenu est en attente de <a href="{% url "moderation_home" %}">modération</a>

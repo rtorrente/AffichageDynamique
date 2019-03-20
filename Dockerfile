@@ -18,5 +18,7 @@ ENV DEFAULT_GROUP_PK 0
 ENV ALLOWED_HOSTS "affichage.bde-insa-lyon.fr"
 ENV RECAPTCHA_PUBLIC_KEY ''
 ENV RECAPTCHA_PRIVATE_KEY ''
+ENV RESTAURANTS_FEED_PK ''
+ENV RESTAURANTS_GROUP_PK ''
 RUN chmod +x bash/run-prod.sh
 CMD bash/run-prod.sh

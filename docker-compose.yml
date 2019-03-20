@@ -21,6 +21,8 @@ services:
       ALLOWED_HOSTS: "affichage.bde-insa-lyon.fr"
       RECAPTCHA_PUBLIC_KEY:
       RECAPTCHA_PRIVATE_KEY:
+      RESTAURANTS_GROUP_PK:
+      RESTAURANTS_FEED_PK:
     stdin_open: true
     restart: always
     expose:

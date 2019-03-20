@@ -60,8 +60,23 @@ def user_content_moderation_pending(self):  # Permet de savoir si l'utilisateur 
         content_feed__is_valid=True).count()
 
 
+def user_is_restaurant(self):  # Permet de savoir si l'utilisateur a du contenu à modérer
+    group_restaurant = Group.objects.get(pk=settings.RESTAURANTS_GROUP_PK)
+    if group_restaurant in self.groups.all() or self.is_superuser:
+        print("True")
+        return True
+    else:
+        print("False")
+        return False
+
+
 User.add_to_class('content_moderation_pending',
-                  user_content_moderation_pending)  # On ajoute cette classe à l'User Model
+                  user_content_moderation_pending)
+User.add_to_class('user_is_restaurant',
+                  user_is_restaurant)
+
+
+# On ajoute les classes à l'User Model
 
 
 # FIN surcharge model user

@@ -36,6 +36,7 @@ def resize_img(file1, content):
         img.resize(height=1080)
     img.format = "png"
     stream_out = six.BytesIO()
+    img.alpha_channel = 'remove'
     img.save(file=stream_out)
     picture = ImageModel()
     picture.content = content

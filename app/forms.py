@@ -1,4 +1,4 @@
-from bootstrap_datepicker_plus import DateTimePickerInput
+from bootstrap_datepicker_plus import DateTimePickerInput, DatePickerInput
 from captcha.fields import ReCaptchaField
 from django import forms
 from django.contrib.auth.models import User
@@ -121,3 +121,25 @@ class SubscriptionForm(forms.ModelForm):
     class Meta:
         model = Subscription
         exclude = ('screen', 'subscription_type')
+
+
+class RestaurantForm(forms.Form):
+    now = timezone.now()
+    date = forms.DateField(widget=DatePickerInput(format='%d/%m/%Y', options={
+        "showClose": False,
+        "showClear": False,
+        "showTodayButton": False,
+        "locale": "fr",
+        "minDate": now.isoformat(),
+        "defaultDate": now.isoformat(),
+    }))
+    midi1 = forms.FileField(required=False, label="")
+    midi2 = forms.FileField(required=False, label="")
+    midi3 = forms.FileField(required=False, label="")
+    midi4 = forms.FileField(required=False, label="")
+    midi5 = forms.FileField(required=False, label="")
+    soir1 = forms.FileField(required=False, label="")
+    soir2 = forms.FileField(required=False, label="")
+    soir3 = forms.FileField(required=False, label="")
+    soir4 = forms.FileField(required=False, label="")
+    soir5 = forms.FileField(required=False, label="")

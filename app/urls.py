@@ -18,6 +18,9 @@ urlpatterns = [
     path('content/add/youtube/', login_required(views.ContentCreateYoutube), name="add_content_youtube"),
     path('content/add/url', login_required(views.ContentCreateUrl), name="add_content_url"),
 
+    # Extra
+    path('extra/restaurants', login_required(views.RestaurantAdd), name="add_restaurant"),
+
     # Screen
     path('screen/list/', login_required(views.list_screen), name='list_screen'),
     path('screen/view/<int:pk_screen>', login_required(views.view_screen), name='view_screen'),

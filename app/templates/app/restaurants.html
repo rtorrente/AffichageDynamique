@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+    <form method="post" enctype="multipart/form-data" style="padding-top: 20px">
+        {% csrf_token %}
+        {{ form.media }}
+        <div class="card">
+            <div class="card-header">
+                Date
+            </div>
+            <div class="card-body" style="text-align: center">
+                {{ form.date|as_crispy_field }}
+            </div>
+        </div>
+        <br/>
+        <div class="card">
+            <div class="card-header">
+                Menus du MIDI
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">MIDI (.png, .jpg, .jpeg, .pdf)</h5>
+                {{ form.midi1|as_crispy_field }}
+                {{ form.midi2|as_crispy_field }}
+                {{ form.midi3|as_crispy_field }}
+                {{ form.midi4|as_crispy_field }}
+                {{ form.midi5|as_crispy_field }}
+            </div>
+        </div>
+        <br/>
+        <div class="card">
+            <div class="card-header">
+                Menus du SOIR
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">SOIR (.png, .jpg, .jpeg, .pdf)</h5>
+                {{ form.soir1|as_crispy_field }}
+                {{ form.soir2|as_crispy_field }}
+                {{ form.soir3|as_crispy_field }}
+                {{ form.soir4|as_crispy_field }}
+                {{ form.soir5|as_crispy_field }}
+            </div>
+        </div>
+        <br/>
+
+        <button type="submit" class="btn btn-success btn-lg btn-block">Valider</button>
+    </form><br/>
+{% endblock %}

@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from django.core.mail import send_mail
 from django.forms import HiddenInput
 from django.http import HttpResponse
@@ -15,7 +16,7 @@ from upload_validator import FileTypeValidator
 from AffichageDynamique import settings
 from app import image_worker
 from .forms import ContentFormImage, RejectContentForm, ScreenMonitoringEndpoint, SubscriptionForm, ContentFormYoutube, \
-    ContentFormUrl
+    ContentFormUrl, RestaurantForm
 from .models import Feed, Content, Subscription, Screen, Image
 
 User = get_user_model()
@@ -359,3 +360,70 @@ class ContentUpdate(UpdateView):
     fields = ['begin_date', 'end_date', 'duration']
     template_name = 'registration/user_update.html'
     # success_url = reverse_lazy('home', args=[self.request])
+
+
+def RestaurantAdd(request):
+    form = RestaurantForm(request.POST or None)
+    group_restaurant = Group.objects.get(pk=settings.RESTAURANTS_GROUP_PK)
+    if not request.user.is_superuser and group_restaurant not in request.user.groups.all():
+        return denied(request)
+    if form.is_valid():
+        for i in ["midi1", "midi2", "midi3", "midi4", "midi5"]:
+            if i in request.FILES:
+                content = Content()
+                content.name = i + " -  " + str(form.cleaned_data["date"])
+                content.user = request.user
+                content.content_type = "I"
+                content.content_url = "image"
+                content.state = "P"
+                content.duration = 7
+                content.begin_date = timezone.datetime.combine(form.cleaned_data["date"],
+                                                               timezone.datetime(1, 1, 1, hour=10).time())
+                content.end_date = timezone.datetime.combine(form.cleaned_data["date"],
+                                                             timezone.datetime(1, 1, 1, hour=14).time())
+                content.feed = Feed.objects.get(pk=2)
+                validator(request.FILES[i])
+                content.save()
+                tmp_url = settings.BASE_DIR + '/tmp/' + request.FILES[i].name
+                with open(tmp_url, 'wb+') as destination:
+                    for chunk in request.FILES[i].chunks():
+                        destination.write(chunk)
+                if request.FILES[i].content_type == "application/pdf":
+                    image_worker.convert_pdf_to_img(tmp_url, content)
+                else:
+                    image_worker.resize_img(tmp_url, content)
+                if content.feed.moderator_group in request.user.groups.all() or request.user.is_superuser:  # Si l'utilisateur est modérateur ou admin on modére directement
+                    content.state = "A"
+                content.is_valid = True
+                content.save()
+        for i in ["soir1", "soir2", "soir3", "soir4", "soir5"]:
+            if i in request.FILES:
+                content = Content()
+                content.name = i + " -  " + str(form.cleaned_data["date"])
+                content.user = request.user
+                content.content_type = "I"
+                content.content_url = "image"
+                content.state = "P"
+                content.duration = 7
+                content.begin_date = timezone.datetime.combine(form.cleaned_data["date"],
+                                                               timezone.datetime(1, 1, 1, hour=14).time())
+                content.end_date = timezone.datetime.combine(form.cleaned_data["date"],
+                                                             timezone.datetime(1, 1, 1, hour=20).time())
+                content.feed = Feed.objects.get(pk=settings.RESTAURANTS_FEED_PK)
+                validator(request.FILES[i])
+                content.save()
+                tmp_url = settings.BASE_DIR + '/tmp/' + request.FILES[i].name
+                with open(tmp_url, 'wb+') as destination:
+                    for chunk in request.FILES[i].chunks():
+                        destination.write(chunk)
+                if request.FILES[i].content_type == "application/pdf":
+                    image_worker.convert_pdf_to_img(tmp_url, content)
+                else:
+                    image_worker.resize_img(tmp_url, content)
+                if content.feed.moderator_group in request.user.groups.all() or request.user.is_superuser:  # Si l'utilisateur est modérateur ou admin on modére directement
+                    content.state = "A"
+                content.is_valid = True
+                content.save()
+        return redirect(reverse("content_list", args=[content.feed.pk]))
+    else:
+        return render(request, 'app/restaurants.html', locals())
