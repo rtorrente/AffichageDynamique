@@ -146,6 +146,8 @@ EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
 LOGOUT_REDIRECT_URL = "/"
 ACCOUNT_ACTIVATION_DAYS = 7
 
+ADMINS = [('Romain TORRENTE', 'romain.torrente@gmail.com')]
+
 ANYMAIL = {
     # (exact settings here depend on your ESP...)
     "MAILGUN_API_KEY": os.getenv('MAILGUN_KEY',""),

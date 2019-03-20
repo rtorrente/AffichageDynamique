@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
-from django.core.mail import send_mail
+from django.core.mail import send_mail, mail_admins
 from django.forms import HiddenInput
 from django.http import HttpResponse
 from django.http import JsonResponse
@@ -334,6 +334,8 @@ def screen_monitoring_endpoint(request):
             if screen.date_last_call > last_monitoring:
                 return HttpResponse(screen.screen_need_on)
             else:
+                mail_admins("Reboot screen", "L'écran " + str(
+                    screen.name) + " a reçu une consigne de redemarrage. Dernier call : " + screen.date_last_call)
                 return HttpResponse(3)
         return HttpResponse(300)
     except:
