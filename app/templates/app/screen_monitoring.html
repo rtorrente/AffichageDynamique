@@ -16,7 +16,7 @@
             </thead>
             <tbody>
             {% for content_detail in screen %}
-                <tr>
+                <tr {% if not content_detail.is_ok %}style="color: #FF775A"{% endif %}>
                     <td><a href="{% url "view_screen" content_detail.pk %}">{{ content_detail.name }}</a></td>
                     <td>{{ content_detail.hostname }}<br/><i>{{ content_detail.ip }}</i></td>
                     <td>{{ content_detail.temperature }} °C</td>

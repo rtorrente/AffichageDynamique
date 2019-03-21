@@ -157,7 +157,25 @@ class Screen(models.Model):
 
     @property
     def is_ok(self):
-        return True
+        time_error = timezone.now() - timezone.timedelta(minutes=10)
+        # Si les appels monitoring et json sont inferieurs à 10 min et que le systeme de fichier est en RO
+        if self.date_last_call > time_error and self.date_last_monitoring > time_error and self.fs_ro:
+            # Si l'écran est bien allumé quand c'est censé être le cas
+            if self.screen_need_on and self.tv_screen_on:
+                return True
+            # Si l'écran est bien éteint quand c'est censé être le cas
+            elif not self.screen_need_on and not self.tv_screen_on:
+                return True
+            else:
+                # Si exctinction auto pas activee, on considère que c'est ok quand même
+                if self.screen_control_type == 1 or self.screen_control_type == 3:
+                    return True
+                # Sinon y'a une erreur
+                else:
+                    return False
+        else:
+            return False
+
 
     @property
     def screen_need_on(self):
