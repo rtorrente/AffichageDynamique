@@ -189,6 +189,11 @@ def json_screen(request, token_screen):
     screen = get_object_or_404(Screen,token=token_screen)
     screen.date_last_call = timezone.now()  # On enregistre l'appel au json (pour le monitoring)
     screen.save()
+    # Si l'écran est éteint et qu'il est censé l'être, on affiche une image fixe pour éviter de faire travailler le proc
+    if not screen.screen_need_on and not screen.tv_screen_on:
+        image = {'type': 'off', 'content': "", 'duration': 120}
+        json.append(image)
+        return JsonResponse(json, safe=False)
     urgent = Subscription.objects.filter(subscription_type="U").filter(screen=screen)
     urgent_active = False
     for subscription in urgent:

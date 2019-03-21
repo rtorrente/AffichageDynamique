@@ -79,6 +79,9 @@
                     'src="' + json_actuel[content_number].content + '"\n' +
                     'frameborder="0" allowfullscreen></iframe>');
             }
+            else if (json_actuel[content_number].type === "off") {
+                future_div.html('<img onload="load_ok()" style="max-height: 100%; max-width: 100%" src="{{ static }}logo_screen_off.png">');
+            }
             setTimeout(next_content, json_actuel[content_number].duration * 1000);
             content_number++;
             if (content_number === json_actuel.length) {

@@ -134,6 +134,8 @@ CRONJOBS = [
     ('0 5 */3 * *', 'app.cron.delete_image_orphan'),
     ('*/15 * * * *', 'app.cron.notify_moderation')
 ]
+
+# FIX Variables d'environnement pas présentes dans cron
 CRONTAB_COMMAND_PREFIX = '. /tmp/env.txt &&'
 
 STATIC_URL = '/static/'
