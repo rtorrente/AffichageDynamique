@@ -2,10 +2,8 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.core.mail import send_mail, mail_admins
 from django.forms import HiddenInput
-from django.http import HttpResponse
-from django.http import JsonResponse
-from django.shortcuts import get_object_or_404
-from django.shortcuts import render, redirect
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import get_object_or_404, render, redirect
 from django.template.loader import render_to_string
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
@@ -14,7 +12,7 @@ from django.views.generic.edit import UpdateView
 from upload_validator import FileTypeValidator
 
 from AffichageDynamique import settings
-from app import image_worker
+from app import utils
 from .forms import ContentFormImage, RejectContentForm, ScreenMonitoringEndpoint, SubscriptionForm, ContentFormYoutube, \
     ContentFormUrl, RestaurantForm
 from .models import Feed, Content, Subscription, Screen, Image
@@ -36,11 +34,7 @@ class UserUpdate(UpdateView):
         return self.request.user
 
 
-def denied(request):
-    return render(request, "denied.html")
-
-
-def ContentCreateImage(request):
+def content_create_image(request):
     form = ContentFormImage(request.POST or None)
     if not request.user.is_superuser:
         form.fields["feed"].queryset = Feed.objects.filter(submitter_group__in=request.user.groups.all())
@@ -51,24 +45,13 @@ def ContentCreateImage(request):
         form.instance.state = 'P'
         validator(request.FILES['file'])
         content = form.save()
-        tmp_url = settings.BASE_DIR + '/tmp/' +  request.FILES['file'].name
-        with open(tmp_url, 'wb+') as destination:
-            for chunk in request.FILES['file'].chunks():
-                destination.write(chunk)
-        if request.FILES['file'].content_type == "application/pdf":
-            image_worker.convert_pdf_to_img(tmp_url, content)
-        else:
-            image_worker.resize_img(tmp_url, content)
-        if content.feed.moderator_group in request.user.groups.all() or request.user.is_superuser: #Si l'utilisateur est modérateur ou admin on modére directement
-            content.state="A"
-        content.is_valid = True
-        content.save()
+        utils.save_image(request.FILES['file'], content, request.user)
         return redirect(reverse("content_list", args=[content.feed.pk]))
     else:
         return render(request, 'app/add_content.html', locals())
 
 
-def ContentCreateYoutube(request):
+def content_create_youtube(request):
     form = ContentFormYoutube(request.POST or None)
     if not request.user.is_superuser:
         form.fields["feed"].queryset = Feed.objects.filter(submitter_group__in=request.user.groups.all())
@@ -77,7 +60,8 @@ def ContentCreateYoutube(request):
         form.instance.content_type = "Y"
         form.instance.state = 'P'
         content = form.save()
-        if content.feed.moderator_group in request.user.groups.all() or request.user.is_superuser:  # Si l'utilisateur est modérateur ou admin on modére directement
+        # Si l'utilisateur est modérateur ou admin on modére directement
+        if content.feed.moderator_group in request.user.groups.all() or request.user.is_superuser:
             content.state = "A"
         content.is_valid = True
         content.save()
@@ -86,7 +70,7 @@ def ContentCreateYoutube(request):
         return render(request, 'app/add_content.html', locals())
 
 
-def ContentCreateUrl(request):
+def content_create_url(request):
     form = ContentFormUrl(request.POST or None)
     if not request.user.is_superuser:
         form.fields["feed"].queryset = Feed.objects.filter(submitter_group__in=request.user.groups.all())
@@ -115,7 +99,7 @@ def home(request):
 def content_list(request, pk):
     feed = get_object_or_404(Feed, pk=pk)
     if feed.submitter_group not in request.user.groups.all() and not request.user.is_superuser and feed.moderator_group not in request.user.groups.all():
-        return denied(request)
+        return utils.denied(request)
     content = Content.objects.filter(feed=feed).filter(is_valid=True).order_by('-end_date')
     return render(request, 'app/content_list.html', {"content": content})
 
@@ -123,7 +107,7 @@ def content_list(request, pk):
 def content_list_moderate(request, pk):
     feed = get_object_or_404(Feed, pk=pk)
     if feed.submitter_group not in request.user.groups.all() and not request.user.is_superuser and feed.moderator_group not in request.user.groups.all():
-        return denied(request)
+        return utils.denied(request)
     content = Content.objects.filter(feed=feed).filter(is_valid=True).filter(state="P").order_by('begin_date')
     return render(request, 'app/content_list.html', {"content": content})
 
@@ -141,7 +125,7 @@ def content_view(request, pk):
     content = get_object_or_404(Content, pk=pk)
     form = RejectContentForm(None)
     if content.feed.submitter_group not in request.user.groups.all() and not request.user.is_superuser and content.feed.moderator_group not in request.user.groups.all():
-        return denied(request)
+        return utils.denied(request)
     image = Image.objects.filter(content=content)
     return render(request, 'app/content_view.html', {"content": content, "images": image, "form": form})
 
@@ -149,7 +133,7 @@ def content_view(request, pk):
 def approve_content(request,pk):
     content = get_object_or_404(Content,pk=pk)
     if not request.user.is_superuser and content.feed.moderator_group not in request.user.groups.all(): #Modo ou SuperAd
-        return denied(request)
+        return utils.denied(request)
     content.state='A'
     content.save()
     msg_plain = render_to_string('app/email_approved.txt', {'user': content.user, 'content': content})
@@ -167,7 +151,7 @@ def reject_content(request, pk):
     if form.is_valid():
         content = get_object_or_404(Content, pk=pk)
         if not request.user.is_superuser and content.feed.moderator_group not in request.user.groups.all():  # Modo ou SuperAd
-            return denied(request)
+            return utils.denied(request)
         content.state='R'
         content.save()
         message = form.cleaned_data['reason']
@@ -195,46 +179,10 @@ def json_screen(request, token_screen):
         json.append(image)
         return JsonResponse(json, safe=False)
     urgent = Subscription.objects.filter(subscription_type="U").filter(screen=screen)
-    urgent_active = False
-    for subscription in urgent:
-        feed = subscription.feed
-        content = feed.content_feed.all()
-        for img in content:
-            if img.active:
-                urgent_active = True
-                if img.content_type == "I":
-                    image1 = img.images.all()
-                    for img1 in image1:
-                        image = {'type': 'image', 'content': str(img1.image),
-                                 'duration': int(img.duration / image1.count())}
-                        json.append(image)
-                elif img.content_type == "Y":
-                    image = {'type': 'youtube', 'content': img.content_url, 'duration': int(img.duration)}
-                    json.append(image)
-                elif img.content_type == "U":
-                    image = {'type': 'iframe', 'content': img.content_url, 'duration': int(img.duration)}
-                    json.append(image)
-                elif img.content_type == "Y":
-                    image = {'type': 'youtube', 'content': img.content_url, 'duration': int(img.duration)}
-                    json.append(image)
-    if not urgent_active:
-        subscription1 = Subscription.objects.filter(subscription_type="N").filter(screen=screen)
-        for sub in subscription1:
-            feed = sub.feed
-            content = feed.content_feed.all()
-            for img in content:
-                if img.active:
-                    if img.content_type=="I":
-                        image1 = img.images.all()
-                        for img1 in image1:
-                            image = {'type': 'image', 'content': str(img1.image), 'duration': int(img.duration/image1.count())}
-                            json.append(image)
-                    elif img.content_type=="Y":
-                        image = {'type': 'youtube', 'content': img.content_url, 'duration': int(img.duration)}
-                        json.append(image)
-                    elif img.content_type=="U":
-                        image = {'type': 'iframe', 'content': img.content_url, 'duration': int(img.duration)}
-                        json.append(image)
+    json = utils.json_append(urgent)
+    if len(json) == 0:
+        subscription = Subscription.objects.filter(subscription_type="N").filter(screen=screen)
+        json = utils.json_append(subscription)
     return JsonResponse(json,safe=False)
 
 
@@ -263,7 +211,7 @@ def list_screen(request):
 def view_screen(request, pk_screen):
     screen = get_object_or_404(Screen, pk=pk_screen)
     if not request.user.is_superuser and screen.hidden and screen.owner_group not in request.user.groups.all():
-        return denied(request)
+        return utils.denied(request)
     urgent = Subscription.objects.filter(screen=screen).filter(subscription_type="U").order_by("-priority")
     normal = Subscription.objects.filter(screen=screen).filter(subscription_type="N").order_by("-priority")
     return render(request, 'app/view_screen.html',
@@ -273,7 +221,7 @@ def view_screen(request, pk_screen):
 def delete_subscription(request, pk_sub):
     subscription = get_object_or_404(Subscription, pk=pk_sub)
     if not request.user.is_superuser and subscription.screen.owner_group not in request.user.groups.all():
-        return denied(request)
+        return utils.denied(request)
     subscription.delete()
     return redirect(reverse("view_screen", args=[subscription.screen.pk]))
 
@@ -281,7 +229,7 @@ def delete_subscription(request, pk_sub):
 def up_subscription(request, pk_sub):
     subscription = get_object_or_404(Subscription, pk=pk_sub)
     if not request.user.is_superuser and subscription.screen.owner_group not in request.user.groups.all():
-        return denied(request)
+        return utils.denied(request)
     if subscription.priority < 10:
         subscription.priority += 1
         subscription.save()
@@ -291,7 +239,7 @@ def up_subscription(request, pk_sub):
 def down_subscription(request, pk_sub):
     subscription = get_object_or_404(Subscription, pk=pk_sub)
     if not request.user.is_superuser and subscription.screen.owner_group not in request.user.groups.all():
-        return denied(request)
+        return utils.denied(request)
     if subscription.priority > 1:
         subscription.priority -= 1
         subscription.save()
@@ -301,7 +249,7 @@ def down_subscription(request, pk_sub):
 def add_subscription(request, pk_screen, type_sub):
     screen = get_object_or_404(Screen, pk=pk_screen)
     if not request.user.is_superuser and screen.owner_group not in request.user.groups.all():
-        return denied(request)
+        return utils.denied(request)
     form = SubscriptionForm(request.POST or None)
     if type_sub == "U":
         form.fields["priority"].initial = 1
@@ -313,7 +261,7 @@ def add_subscription(request, pk_screen, type_sub):
     form.fields["feed"].queryset = form.fields["feed"].queryset.exclude(pk__in=[feed.feed.pk for feed in actuel])
     if form.is_valid():
         if not type_sub == "N" and not type_sub == "U":
-            return denied(request)
+            return utils.denied(request)
         form.instance.subscription_type = type_sub
         form.instance.screen = screen
         form.save()
@@ -349,7 +297,7 @@ def screen_monitoring_endpoint(request):
 
 def screen_monitoring(request):
     if not request.user.is_superuser:
-        return denied(request)
+        return utils.denied(request)
     screen = Screen.objects.order_by("name", "place_group")
     return render(request, "app/screen_monitoring.html", {"screen": screen})
 
@@ -364,16 +312,16 @@ def screen_monitoring_get_control_mode(request, token):
 
 class ContentUpdate(UpdateView):
     model = Content
-    fields = ['begin_date', 'end_date', 'duration']
+    fields = ['begin_date', 'end_date', 'duration', 'content_url']
     template_name = 'registration/user_update.html'
     # success_url = reverse_lazy('home', args=[self.request])
 
 
-def RestaurantAdd(request):
+def restaurant_add(request):
     form = RestaurantForm(request.POST or None)
     group_restaurant = Group.objects.get(pk=settings.RESTAURANTS_GROUP_PK)
     if not request.user.is_superuser and group_restaurant not in request.user.groups.all():
-        return denied(request)
+        return utils.denied(request)
     if form.is_valid():
         for i in ["midi1", "midi2", "midi3", "midi4", "midi5"]:
             if i in request.FILES:
@@ -391,18 +339,7 @@ def RestaurantAdd(request):
                 content.feed = Feed.objects.get(pk=settings.RESTAURANTS_FEED_PK)
                 validator(request.FILES[i])
                 content.save()
-                tmp_url = settings.BASE_DIR + '/tmp/' + request.FILES[i].name
-                with open(tmp_url, 'wb+') as destination:
-                    for chunk in request.FILES[i].chunks():
-                        destination.write(chunk)
-                if request.FILES[i].content_type == "application/pdf":
-                    image_worker.convert_pdf_to_img(tmp_url, content)
-                else:
-                    image_worker.resize_img(tmp_url, content)
-                if content.feed.moderator_group in request.user.groups.all() or request.user.is_superuser:  # Si l'utilisateur est modérateur ou admin on modére directement
-                    content.state = "A"
-                content.is_valid = True
-                content.save()
+                utils.save_image(request.FILES[i], content, request.user)
         for i in ["soir1", "soir2", "soir3", "soir4", "soir5"]:
             if i in request.FILES:
                 content = Content()
@@ -419,18 +356,7 @@ def RestaurantAdd(request):
                 content.feed = Feed.objects.get(pk=settings.RESTAURANTS_FEED_PK)
                 validator(request.FILES[i])
                 content.save()
-                tmp_url = settings.BASE_DIR + '/tmp/' + request.FILES[i].name
-                with open(tmp_url, 'wb+') as destination:
-                    for chunk in request.FILES[i].chunks():
-                        destination.write(chunk)
-                if request.FILES[i].content_type == "application/pdf":
-                    image_worker.convert_pdf_to_img(tmp_url, content)
-                else:
-                    image_worker.resize_img(tmp_url, content)
-                if content.feed.moderator_group in request.user.groups.all() or request.user.is_superuser:  # Si l'utilisateur est modérateur ou admin on modére directement
-                    content.state = "A"
-                content.is_valid = True
-                content.save()
+                utils.save_image(request.FILES[i], content, request.user)
         return redirect(reverse("content_list", args=[content.feed.pk]))
     else:
         return render(request, 'app/restaurants.html', locals())
