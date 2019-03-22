@@ -20,30 +20,34 @@ class UserProfileRegistrationForm(RegistrationForm):
         fields = (User.USERNAME_FIELD, "email", 'first_name', 'last_name')
         help_texts = {'username': ""}
 
+
 class ContentFormImage(forms.ModelForm):
     file = forms.FileField(required=False, label="Fichier à afficher (.png, .jpg, .jpeg, .pdf)")
+
     class Meta:
         now = timezone.now()
+        today = timezone.datetime.combine(now, timezone.datetime(1, 1, 1, hour=6).time())
+        end = timezone.datetime.combine(now + timezone.timedelta(days=7), timezone.datetime(1, 1, 1, hour=23).time())
         model = Content
-        exclude = ('user', 'content_type', 'content_url', 'state', 'is_valid')
+        exclude = ('user', 'content_type', 'content_url', 'state', 'is_valid', 'user_moderator', 'reject_reason')
         widgets = {
             'begin_date': DateTimePickerInput(format='%d/%m/%Y %H:%M', options={
                 "showClose": False,
                 "showClear": False,
                 "showTodayButton": False,
                 "locale": "fr",
-                "minDate": now.isoformat(),
+                "minDate": today.isoformat(),
                 "maxDate": (now + timezone.timedelta(days=30)).isoformat(),
-                "defaultDate":now.isoformat(),
+                "defaultDate": today.isoformat(),
                  }),
             'end_date': DateTimePickerInput(format='%d/%m/%Y %H:%M', options={
                 "showClose": False,
                 "showClear": False,
                 "showTodayButton": False,
                 "locale": "fr",
-                "minDate": now.isoformat(),
+                "minDate": today.isoformat(),
                 "maxDate": (now + timezone.timedelta(days=37)).isoformat(),
-                "defaultDate":(now+timezone.timedelta(days=7)).isoformat()
+                "defaultDate": end.isoformat()
                  }),  # specify date-frmat
         }
 
@@ -51,8 +55,10 @@ class ContentFormImage(forms.ModelForm):
 class ContentFormYoutube(forms.ModelForm):
     class Meta:
         now = timezone.now()
+        today = timezone.datetime.combine(now, timezone.datetime(1, 1, 1, hour=6).time())
+        end = timezone.datetime.combine(now + timezone.timedelta(days=7), timezone.datetime(1, 1, 1, hour=23).time())
         model = Content
-        exclude = ('user', 'content_type', 'state', 'is_valid')
+        exclude = ('user', 'content_type', 'state', 'is_valid', 'user_moderator', 'reject_reason')
         labels = {"content_url": "ID Vidéo Youtube"}
         widgets = {
             'begin_date': DateTimePickerInput(format='%d/%m/%Y %H:%M', options={
@@ -60,18 +66,18 @@ class ContentFormYoutube(forms.ModelForm):
                 "showClear": False,
                 "showTodayButton": False,
                 "locale": "fr",
-                "minDate": now.isoformat(),
+                "minDate": today.isoformat(),
                 "maxDate": (now + timezone.timedelta(days=30)).isoformat(),
-                "defaultDate": now.isoformat(),
+                "defaultDate": today.isoformat(),
             }),
             'end_date': DateTimePickerInput(format='%d/%m/%Y %H:%M', options={
                 "showClose": False,
                 "showClear": False,
                 "showTodayButton": False,
                 "locale": "fr",
-                "minDate": now.isoformat(),
+                "minDate": today.isoformat(),
                 "maxDate": (now + timezone.timedelta(days=37)).isoformat(),
-                "defaultDate": (now + timezone.timedelta(days=7)).isoformat()
+                "defaultDate": end.isoformat()
             }),  # specify date-frmat
         }
 
@@ -79,8 +85,10 @@ class ContentFormYoutube(forms.ModelForm):
 class ContentFormUrl(forms.ModelForm):
     class Meta:
         now = timezone.now()
+        today = timezone.datetime.combine(now, timezone.datetime(1, 1, 1, hour=6).time())
+        end = timezone.datetime.combine(now + timezone.timedelta(days=7), timezone.datetime(1, 1, 1, hour=23).time())
         model = Content
-        exclude = ('user', 'content_type', 'state', 'is_valid')
+        exclude = ('user', 'content_type', 'state', 'is_valid', 'user_moderator', 'reject_reason')
         labels = {"content_url": "Lien page web (HTTPS uniquement)"}
         widgets = {
             'begin_date': DateTimePickerInput(format='%d/%m/%Y %H:%M', options={
@@ -88,20 +96,21 @@ class ContentFormUrl(forms.ModelForm):
                 "showClear": False,
                 "showTodayButton": False,
                 "locale": "fr",
-                "minDate": now.isoformat(),
+                "minDate": today.isoformat(),
                 "maxDate": (now + timezone.timedelta(days=30)).isoformat(),
-                "defaultDate": now.isoformat(),
+                "defaultDate": today.isoformat(),
             }),
             'end_date': DateTimePickerInput(format='%d/%m/%Y %H:%M', options={
                 "showClose": False,
                 "showClear": False,
                 "showTodayButton": False,
                 "locale": "fr",
-                "minDate": now.isoformat(),
+                "minDate": today.isoformat(),
                 "maxDate": (now + timezone.timedelta(days=37)).isoformat(),
-                "defaultDate": (now + timezone.timedelta(days=7)).isoformat()
+                "defaultDate": end.isoformat()
             }),  # specify date-frmat
         }
+
 
 class RejectContentForm(forms.Form):
     reason = forms.CharField(label="Motif du refus", help_text="Envoyé par email à l'utilisateur")

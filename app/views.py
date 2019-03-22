@@ -135,6 +135,7 @@ def approve_content(request,pk):
     if not request.user.is_superuser and content.feed.moderator_group not in request.user.groups.all(): #Modo ou SuperAd
         return utils.denied(request)
     content.state='A'
+    content.user_moderator = request.user
     content.save()
     msg_plain = render_to_string('app/email_approved.txt', {'user': content.user, 'content': content})
     send_mail(
@@ -152,9 +153,12 @@ def reject_content(request, pk):
         content = get_object_or_404(Content, pk=pk)
         if not request.user.is_superuser and content.feed.moderator_group not in request.user.groups.all():  # Modo ou SuperAd
             return utils.denied(request)
-        content.state='R'
-        content.save()
         message = form.cleaned_data['reason']
+        content.state='R'
+        content.user_moderator = request.user
+        content.reject_reason = message
+        content.save()
+
         msg_plain = render_to_string('app/email_rejected.txt',
                                      {'user': content.user, 'content': content, 'message': message})
         send_mail(

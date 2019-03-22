@@ -59,6 +59,7 @@ def save_image(file, content, user):
     # Si l'utilisateur est modérateur ou admin on modére directement
     if content.feed.moderator_group in user.groups.all() or user.is_superuser:
         content.state = "A"
+        content.user_moderator = user
     content.is_valid = True
     content.save()
 
