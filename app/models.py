@@ -213,8 +213,8 @@ class Subscription(models.Model):
 class Content(models.Model):
     name = models.CharField(verbose_name='Nom du contenu', blank=False, max_length=255, null=False)
     user = models.ForeignKey(User, on_delete=models.SET_DEFAULT, default=1)
-    user_moderator = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="+")
-    reject_reason = models.TextField(null=True, default=None)
+    user_moderator = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="+", blank=True)
+    reject_reason = models.TextField(null=True, default=None, blank=True)
     begin_date = models.DateTimeField(verbose_name="Début d'affichage", blank=False, null=False)
     end_date = models.DateTimeField(verbose_name="Fin d'affichage", blank = False, null=False)
     submission_date = models.DateTimeField(auto_now_add=True)
