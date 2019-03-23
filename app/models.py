@@ -56,8 +56,8 @@ def create_user_profile(sender, instance, created, **kwargs):
 
 # Début surcharge model user
 def user_content_moderation_pending(self):  # Permet de savoir si l'utilisateur a du contenu à modérer
-    return Feed.objects.filter(moderator_group__in=self.groups.all()).filter(content_feed__state="P").filter(
-        content_feed__is_valid=True).count()
+    return Feed.objects.filter(moderator_group__in=self.groups.all()).filter(content_feed__state="P",
+                                                                             content_feed__is_valid=True).count()
 
 
 def user_is_restaurant(self):  # Permet de savoir si l'utilisateur a du contenu à modérer

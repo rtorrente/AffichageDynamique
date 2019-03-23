@@ -39,7 +39,7 @@ def notify_old_user():
 
 def notify_moderation():
     last = timezone.now() - timezone.timedelta(hours=12)
-    feed_list = Feed.objects.filter(content_feed__state="P").filter(content_feed__is_valid=True).filter(
+    feed_list = Feed.objects.filter(content_feed__state="P", content_feed__is_valid=True).filter(
         date_last_moderation_email__lt=last).distinct()
     for feed in feed_list:
         user_list = User.objects.filter(groups=feed.moderator_group).distinct()
