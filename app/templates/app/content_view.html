@@ -19,9 +19,9 @@
                 <li class="list-group-item text-right"><span class="pull-left"><strong class="">Utilisateur : </strong></span><br> {{ content.user.first_name }} {{ content.user.last_name }}<br/>{{ content.user.email }}</li>
                 {% if content.user_moderator is not None %}
                     <li class="list-group-item text-right"><span class="pull-left"><strong
-                            class="">Modérateur : </strong></span><br>Raison : {{ content.user_moderator.first_name }}
+                            class="">Modérateur : </strong></span><br>{{ content.user_moderator.first_name }}
                         {{ content.user_moderator.last_name }}{% if content.reject_reason is not None %}<br/>
-                            {{ content.reject_reason }}{% endif %}</li>{% endif %}
+                            Raison : {{ content.reject_reason }}{% endif %}</li>{% endif %}
                 <li class="list-group-item text-right"><span class="pull-left"><strong
                         class="">Dates : </strong></span> {{ content.begin_date }} - {{ content.end_date }}
                     ({{ content.begin_date|timesince:content.end_date }})

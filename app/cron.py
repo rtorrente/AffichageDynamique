@@ -1,11 +1,11 @@
 import os
 from django.contrib.auth import get_user_model
-from django.core.mail import send_mail
+from django.core.mail import send_mail, mail_admins
 from django.template.loader import render_to_string
 from django.utils import timezone
 
 from AffichageDynamique import settings
-from .models import Image, Content, Feed
+from .models import Image, Content, Feed, Screen
 
 User = get_user_model()
 
@@ -54,3 +54,10 @@ def notify_moderation():
             )
         feed.date_last_moderation_email = timezone.now()
         feed.save()
+
+
+def notify_screen_hs():
+    screen_list = Screen.objects.all()
+    for screen in screen_list:
+        if not screen.is_ok:
+            mail_admins("Problème screen", "L'écran " + str(screen.name) + " rencontre un problème")

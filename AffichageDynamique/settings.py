@@ -132,7 +132,8 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 CRONJOBS = [
     ('0 3 * * *', 'app.cron.delete_old_content'),
     ('0 5 */3 * *', 'app.cron.delete_image_orphan'),
-    ('*/15 * * * *', 'app.cron.notify_moderation')
+    ('*/15 * * * *', 'app.cron.notify_moderation'),
+    ('*/15 * * * *', 'app.cron.notify_screen_hs')
 ]
 
 # FIX Variables d'environnement pas présentes dans cron
