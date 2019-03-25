@@ -114,9 +114,9 @@ def content_list_moderate(request, pk):
 
 def moderation_home(request):
     if request.user.is_superuser:
-        feed = Feed.objects.filter(content_feed__state="P").distinct()
+        feed = Feed.objects.filter(content_feed__state="P", content_feed__is_valid=True).distinct()
     else:
-        feed = Feed.objects.filter(content_feed__state="P").filter(
+        feed = Feed.objects.filter(content_feed__state="P", content_feed__is_valid=True).filter(
             moderator_group__in=request.user.groups.all()).distinct()
     return render(request, 'app/moderation_home.html', {"feed": feed})
 
@@ -187,7 +187,7 @@ def json_screen(request, token_screen):
     if len(json) == 0:
         subscription = Subscription.objects.filter(subscription_type="N").filter(screen=screen)
         json = utils.json_append(subscription)
-    return JsonResponse(json,safe=False)
+    return JsonResponse(json, safe=False)
 
 
 def display(request, token_screen):

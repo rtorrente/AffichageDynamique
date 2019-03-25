@@ -1,9 +1,9 @@
-certifi==2018.11.29
+certifi==2019.3.9
 chardet==3.0.4
 confusable-homoglyphs==3.2.0
 dj-database-url==0.5.0
 Django==2.1.7
-django-anymail==5.0
+django-anymail==6.0
 django-bootstrap-datepicker-plus==3.0.5
 django-crispy-forms==1.7.2
 django-crontab==0.7.1
@@ -20,4 +20,4 @@ pytz==2018.9
 requests==2.21.0
 six==1.12.0
 urllib3==1.24.1
-Wand==0.5.1
+Wand==0.5.2
