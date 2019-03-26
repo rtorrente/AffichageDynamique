@@ -1,4 +1,6 @@
 <style type="text/css">
+
+    {# Assurer le full screen #}
     body {
         margin: 0;
         padding: 0;
@@ -13,15 +15,16 @@
         width: 100%;
     }
 
-    #content1, #content2 {
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        -webkit-transform: translate(-50%, -50%);
-        transform: translate(-50%, -50%);
-        height: 100%;
-        width: 100%;
-    }
+    {# Pour centrer le contenu qui ne fait pas la taille de l'écran tout en s'assurant du full screen #}
+    {% comment %}    #content1, #content2 {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            -webkit-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+            height: 100%;
+            width: 100%;
+        }{% endcomment %}
 
 </style>
 <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
