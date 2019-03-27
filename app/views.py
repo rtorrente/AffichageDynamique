@@ -101,10 +101,11 @@ def home(request):
         stat['screen_total'] = screen_list.count()
         stat['screen_ok'] = 0
         stat['screen_on'] = 0
+        time_error = timezone.now() - timezone.timedelta(minutes=10)
         for screen in screen_list:
             if screen.is_ok:
                 stat['screen_ok'] += 1
-            if not screen.screen_is_off:
+            if not screen.tv_screen_on and screen.date_last_call > time_error:
                 stat['screen_on'] += 1
         stat['user_total'] = User.objects.latest("pk").pk
         stat['user_active'] = User.objects.filter(is_active=True).count()
@@ -306,7 +307,7 @@ def screen_monitoring_endpoint(request):
             screen.save()
             last_monitoring = timezone.now() - timezone.timedelta(minutes=20)
             if screen.date_last_call > last_monitoring:
-                return HttpResponse(screen.screen_need_on())
+                return HttpResponse(screen.screen_need_on)
             else:
                 mail_admins("Reboot screen", "L'écran " + str(
                     screen.name) + " a reçu une consigne de redemarrage. Dernier call : " + screen.date_last_call)
