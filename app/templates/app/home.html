@@ -1,5 +1,20 @@
 {% extends "base.html" %}
 {% block content %}
+    {% if user.is_superuser %}
+        <div class="alert alert-primary" role="alert">
+            FUN STATS<br>
+            <b>Contenus</b> :
+            <ul style="margin:0; padding:0:">Actifs : {{ stat.active }}</ul>
+            <ul style="margin:0; padding:0:">Depuis le début : {{ stat.since_creation }}</ul>
+            <b>Ecrans</b> :
+            <ul style="margin:0; padding:0:">Inscrits : {{ stat.screen_total }}</ul>
+            <ul style="margin:0; padding:0:">Sans problème : {{ stat.screen_ok }}</ul>
+            <ul style="margin:0; padding:0:">Diffusant actuellement : {{ stat.screen_on }}</ul>
+            <b>Utilisateurs</b> :
+            <ul style="margin:0; padding:0:">Actifs : {{ stat.user_active }}</ul>
+            <ul style="margin:0; padding:0:">Depuis le début : {{ stat.user_total }}</ul>
+        </div>
+    {% endif %}
     <div><div>
         {% if feed %}
             {% for team in feed %}

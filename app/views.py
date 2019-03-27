@@ -89,11 +89,28 @@ def content_create_url(request):
 
 
 def home(request):
+    stat = {}
     if request.user.is_superuser:
-        feed = Feed.objects.order_by("feed_group")
+        feed_home = Feed.objects.order_by("feed_group")
+        stat['since_creation'] = Content.objects.latest("pk").pk
+        feed_list = Feed.objects.all()
+        stat['active'] = 0
+        for feed in feed_list:
+            stat['active'] += feed.count_active
+        screen_list = Screen.objects.all()
+        stat['screen_total'] = screen_list.count()
+        stat['screen_ok'] = 0
+        stat['screen_on'] = 0
+        for screen in screen_list:
+            if screen.is_ok:
+                stat['screen_ok'] += 1
+            if not screen.screen_is_off:
+                stat['screen_on'] += 1
+        stat['user_total'] = User.objects.latest("pk").pk
+        stat['user_active'] = User.objects.filter(is_active=True).count()
     else:
-        feed = Feed.objects.filter(submitter_group__in=request.user.groups.all()).order_by("feed_group")
-    return render(request, 'app/feed_list.html', {'feed': feed})
+        feed_home = Feed.objects.filter(submitter_group__in=request.user.groups.all()).order_by("feed_group")
+    return render(request, 'app/home.html', {'feed': feed_home, 'stat': stat})
 
 
 def content_list(request, pk):

@@ -48,6 +48,8 @@ def delete_old_user():
             )
         else:
             user.delete()
+    date_inactive = timezone.now() - timezone.timedelta(days=(settings.ACCOUNT_ACTIVATION_DAYS + 2))
+    User.objects.filter(date_joined__lt=date_inactive).filter(is_active=False).filter(is_superuser=False).delete()
 
 
 def notify_moderation():

@@ -128,7 +128,7 @@ class Feed(models.Model):
         return self.feed_group.name + " - " + self.name
     @property
     def count_active(self):
-        content = Content.objects.filter(feed=self)
+        content = Content.objects.filter(feed=self).filter(is_valid=True)
         sum = 0
         for cont in content:
             if cont.active:
@@ -247,7 +247,7 @@ class Content(models.Model):
 
     @property
     def active(self):
-        if self.state == 'A' and not self.future and not self.past:
+        if self.state == 'A' and not self.future and not self.past and self.is_valid:
             return True
         else:
             return False
