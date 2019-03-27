@@ -4,6 +4,7 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils import timezone
+from wand.image import Image as WandImage
 
 from AffichageDynamique import settings
 
@@ -269,3 +270,13 @@ class Image(models.Model):
     @property
     def get_image_url(self):
         return settings.MEDIA_URL + str(self.image)
+
+    @property
+    def get_image_size(self):
+        img = WandImage(filename=settings.MEDIA_ROOT + "/" + str(self.image))
+        image = []
+        # 1 = 0 on django html template
+        image.insert(1, img.width)
+        # 2 = 1 on django html template
+        image.insert(2, img.height)
+        return image

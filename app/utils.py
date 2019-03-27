@@ -3,17 +3,17 @@ from PyPDF2 import PdfFileReader
 from django.shortcuts import render
 from django.utils import six
 from wand.color import Color
-from wand.image import Image
+from wand.image import Image as WandImage
 
 from AffichageDynamique import settings
-from .models import Image as ImageModel
+from .models import Image
 
 
 def convert_pdf_to_img(file1, content):
     size = '_' + str(1920) + 'x' + str(1080) + 'px'
     input_file = PdfFileReader(open(file1, 'rb'))
     for i in range(input_file.getNumPages()):
-        with Image(filename=file1 + '[' + str(i) + ']', resolution=300) as img:
+        with WandImage(filename=file1 + '[' + str(i) + ']', resolution=300) as img:
             if img.height != 1080:
                 img.resize(height=1080)
             if img.width > 1920:
@@ -23,7 +23,7 @@ def convert_pdf_to_img(file1, content):
             img.alpha_channel = 'remove'
             stream_out = six.BytesIO()
             img.save(file=stream_out)
-            picture = ImageModel()
+            picture = Image()
             picture.content = content
             picture.image.save(name="content" + str(content.pk) + ".png", content=stream_out)
             picture.save()
@@ -31,7 +31,7 @@ def convert_pdf_to_img(file1, content):
 
 
 def resize_img(file1, content):
-    img = Image(filename=file1)
+    img = WandImage(filename=file1)
     if(img.width>1920):
         img.resize(width=1920)
     if(img.height>1080):
@@ -40,11 +40,19 @@ def resize_img(file1, content):
     stream_out = six.BytesIO()
     img.alpha_channel = 'remove'
     img.save(file=stream_out)
-    picture = ImageModel()
+    picture = Image()
     picture.content = content
     picture.image.save(name="content" + str(content.pk) + ".png", content=stream_out)
     picture.save()
     os.remove(file1)
+
+
+def image_size(file):
+    img = WandImage(filename=file)
+    image = []
+    image.height = img.height
+    image.width = img.width
+    return image
 
 
 def save_image(file, content, user):

@@ -11,7 +11,7 @@
     </div>
     <br>
     <div class="row">
-        <div class="col-sm-3">
+        <div class="col-sm-3 mb-3">
             <!--left col-->
             <ul class="list-group">
                 <li class="list-group-item text-muted" contenteditable="false">Détails</li>
@@ -50,6 +50,7 @@
             {% if content.content_type == "I" %}
             {% for image in images %}
                 <img src="{{ image.get_image_url }}" style="max-width: 100%; max-height: auto"> <br/>
+                <h5 align="center">Dimensions : {{ image.get_image_size.0 }} x {{ image.get_image_size.1 }}</h5>
             {% endfor %}
             {% elif content.content_type == "Y" %}
                 <iframe id="ytplayer" type="text/html" height="100%" width="100%"
