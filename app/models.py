@@ -152,7 +152,7 @@ class Screen(models.Model):
     hidden = models.BooleanField(default=False)
     place_group = models.ForeignKey(Place, null=True, on_delete=models.SET_NULL)
     screen_control_type = models.IntegerField(null=False, default=0, choices=SCREEN_CONTROL_TYPE)
-    date_last_problem_email = models.DateTimeField(editable=True, null=True, blank=True)
+    date_last_problem_email = models.DateTimeField(editable=True, auto_now_add=True)
 
     def __str__(self):
         return self.name
