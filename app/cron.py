@@ -77,10 +77,10 @@ def notify_screen_hs():
             msg_plain = render_to_string('app/email_screen_hs.txt',
                                          {'screen': screen})
             mail_admins("Problème écran " + screen.name, msg_plain)
-            screen.date_last_monitoring = timezone.now()
+            screen.date_last_problem_email = timezone.now()
             screen.save()
         # Magouille pour permettre de resignaler si le screen devient ok et rebug
         elif screen.is_ok and screen.date_last_problem_email > last:
             last_fake = timezone.now() - timezone.timedelta(days=1)
-            screen.date_last_monitoring = last_fake
+            screen.date_last_problem_email = last_fake
             screen.save()
