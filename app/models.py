@@ -170,7 +170,7 @@ class Screen(models.Model):
                 return True
             else:
                 # Si exctinction auto pas activee, on considère que c'est ok quand même
-                if self.screen_control_type == 1 or self.screen_control_type == 3:
+                if self.screen_control_type == 0 or self.screen_control_type == 2:
                     return True
                 # Sinon y'a une erreur
                 else:
