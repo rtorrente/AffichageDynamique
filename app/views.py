@@ -178,7 +178,7 @@ def json_screen(request, token_screen):
     screen.date_last_call = timezone.now()  # On enregistre l'appel au json (pour le monitoring)
     screen.save()
     # Si l'écran est éteint et qu'il est censé l'être, on affiche une image fixe pour éviter de faire travailler le proc
-    if not screen.screen_need_on and not screen.tv_screen_on:
+    if screen.screen_is_off:
         image = {'type': 'off', 'content': "", 'duration': 120}
         json.append(image)
         return JsonResponse(json, safe=False)
@@ -289,7 +289,7 @@ def screen_monitoring_endpoint(request):
             screen.save()
             last_monitoring = timezone.now() - timezone.timedelta(minutes=20)
             if screen.date_last_call > last_monitoring:
-                return HttpResponse(screen.screen_need_on)
+                return HttpResponse(screen.screen_need_on())
             else:
                 mail_admins("Reboot screen", "L'écran " + str(
                     screen.name) + " a reçu une consigne de redemarrage. Dernier call : " + screen.date_last_call)

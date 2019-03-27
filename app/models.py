@@ -163,10 +163,12 @@ class Screen(models.Model):
         # Si les appels monitoring et json sont inferieurs à 10 min et que le systeme de fichier est en RO
         if self.date_last_call > time_error and self.date_last_monitoring > time_error and self.fs_ro:
             # Si l'écran est bien allumé quand c'est censé être le cas
-            if self.screen_need_on and self.tv_screen_on:
+            if (self.screen_need_on() and self.tv_screen_on) or (
+                    not self.screen_need_on(time_error) and not self.tv_screen_on):
                 return True
             # Si l'écran est bien éteint quand c'est censé être le cas
-            elif not self.screen_need_on and not self.tv_screen_on:
+            elif (not self.screen_need_on() and not self.tv_screen_on) or (
+                    self.screen_need_on(time_error) and self.tv_screen_on):
                 return True
             else:
                 # Si exctinction auto pas activee, on considère que c'est ok quand même
@@ -178,10 +180,10 @@ class Screen(models.Model):
         else:
             return False
 
-    @property
-    def screen_need_on(self):
+    # Pas une property !
+    def screen_need_on(self, time=timezone.now()):
         if self.place_group is not None:
-            now = timezone.localtime(timezone.now())
+            now = timezone.localtime(time)
             day = now.isoweekday()
             hour = now.time()
             hour = Hour.objects.filter(hour_group=self.place_group.hour_group).filter(day=day).filter(
@@ -195,7 +197,7 @@ class Screen(models.Model):
 
     @property
     def screen_is_off(self):
-        if not self.screen_need_on and not self.tv_screen_on:
+        if not self.screen_need_on() and not self.tv_screen_on:
             return True
         else:
             return False
