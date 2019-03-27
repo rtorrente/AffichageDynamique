@@ -38,11 +38,11 @@ DAY_TYPE = [
 ]
 
 SCREEN_CONTROL_TYPE = [
-    (1, "None"),
-    (2, "CEC RW"),
-    (3, "CEC RO"),
-    (4, "LG Serial"),
-    (5, "RPi TV Service")
+    (0, "None"),
+    (1, "CEC RW"),
+    (2, "CEC RO"),
+    (3, "LG Serial"),
+    (4, "RPi TV Service")
 ]
 
 
@@ -151,7 +151,8 @@ class Screen(models.Model):
     ip = models.GenericIPAddressField(blank=True, null=True)
     hidden = models.BooleanField(default=False)
     place_group = models.ForeignKey(Place, null=True, on_delete=models.SET_NULL)
-    screen_control_type = models.IntegerField(null=False, default=1, choices=SCREEN_CONTROL_TYPE)
+    screen_control_type = models.IntegerField(null=False, default=0, choices=SCREEN_CONTROL_TYPE)
+    date_last_problem_email = models.DateTimeField(editable=True, null=True, blank=True)
 
     def __str__(self):
         return self.name
@@ -177,7 +178,6 @@ class Screen(models.Model):
         else:
             return False
 
-
     @property
     def screen_need_on(self):
         if self.place_group is not None:
@@ -199,6 +199,10 @@ class Screen(models.Model):
             return True
         else:
             return False
+
+    @property
+    def get_screen_control_type(self):
+        return SCREEN_CONTROL_TYPE[self.screen_control_type][1]
 
 
 class Subscription(models.Model):

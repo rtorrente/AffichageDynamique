@@ -1,0 +1,11 @@
+{% autoescape off %}
+Bonjour {{ user.first_name }} {{ user.last_name }},
+
+Votre compte semble inactif. En effet, votre dernière connexion date du {{ user.last_login }}.
+Sans connexion de votre part, celui-ci sera supprimé le {{ date_supression }}.
+
+URL : https://{{ site }}
+
+Merci.
+
+{% endautoescape %}

@@ -31,10 +31,23 @@ def delete_old_content():
     content.delete()
 
 
-def notify_old_user():
+def delete_old_user():
     date = timezone.now() - timezone.timedelta(days=365)
-    user = User.objects.filter(last_login__lt=date).filter(is_active=True)
-    print(user)
+    user_list = User.objects.filter(last_login__lt=date).filter(is_active=True).filter(is_superuser=False)
+    for user in user_list:
+        date_supression = (user.last_login + timezone.timedelta(days=395)).date()
+        if timezone.now().date() <= date_supression:
+            msg_plain = render_to_string('app/email_inactive.txt',
+                                         {'user': user, 'date_supression': date_supression,
+                                          "site": settings.ALLOWED_HOSTS[0]})
+            send_mail(
+                settings.EMAIL_SUBJECT_PREFIX + " Compte inactif",
+                msg_plain,
+                settings.DEFAULT_FROM_EMAIL,
+                [user.email],
+            )
+        else:
+            user.delete()
 
 
 def notify_moderation():
@@ -44,10 +57,10 @@ def notify_moderation():
     for feed in feed_list:
         user_list = User.objects.filter(groups=feed.moderator_group).distinct()
         for user in user_list:
-            msg_plain = render_to_string('app/pending_moderation.txt',
+            msg_plain = render_to_string('app/email_pending_moderation.txt',
                                          {'user': user, 'site': settings.ALLOWED_HOSTS[0], 'feed': feed})
             send_mail(
-                feed.name + " - Contenu à modérer",
+                settings.EMAIL_SUBJECT_PREFIX + " " + feed.name + " - Contenu à modérer",
                 msg_plain,
                 settings.DEFAULT_FROM_EMAIL,
                 [user.email],
@@ -57,7 +70,17 @@ def notify_moderation():
 
 
 def notify_screen_hs():
+    last = timezone.now() - timezone.timedelta(hours=6)
     screen_list = Screen.objects.all()
     for screen in screen_list:
-        if not screen.is_ok:
-            mail_admins("Problème screen", "L'écran " + str(screen.name) + " rencontre un problème")
+        if not screen.is_ok and screen.date_last_problem_email < last:
+            msg_plain = render_to_string('app/email_screen_hs.txt',
+                                         {'screen': screen})
+            mail_admins("Problème écran " + screen.name, msg_plain)
+            screen.date_last_monitoring = timezone.now()
+            screen.save()
+        # Magouille pour permettre de resignaler si le screen devient ok et rebug
+        elif screen.is_ok and screen.date_last_problem_email > last:
+            last_fake = timezone.now() - timezone.timedelta(days=1)
+            screen.date_last_monitoring = last_fake
+            screen.save()

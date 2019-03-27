@@ -133,7 +133,8 @@ CRONJOBS = [
     ('0 3 * * *', 'app.cron.delete_old_content'),
     ('0 5 */3 * *', 'app.cron.delete_image_orphan'),
     ('*/15 * * * *', 'app.cron.notify_moderation'),
-    ('*/15 * * * *', 'app.cron.notify_screen_hs')
+    ('*/15 * * * *', 'app.cron.notify_screen_hs'),
+    ('0 1 */10 * *', 'app.cron.delete_old_user')
 ]
 
 # FIX Variables d'environnement pas présentes dans cron
@@ -160,6 +161,7 @@ ANYMAIL = {
 }
 
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL',"affichage@mg.bde-insa-lyon.fr")
+EMAIL_SUBJECT_PREFIX = os.getenv('EMAIL_SUBJECT_PREFIX', "[Affichage Dynamique]")
 SERVER_EMAIL = DEFAULT_FROM_EMAIL
 DEFAULT_GROUP_PK = os.getenv('DEFAULT_GROUP_PK', 0)
 

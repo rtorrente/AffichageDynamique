@@ -23,6 +23,7 @@ services:
       RECAPTCHA_PRIVATE_KEY:
       RESTAURANTS_GROUP_PK:
       RESTAURANTS_FEED_PK:
+      EMAIL_SUBJECT_PREFIX: '[Affichage Dynamique]'
     stdin_open: true
     restart: always
     expose:

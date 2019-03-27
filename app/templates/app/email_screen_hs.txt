@@ -1,0 +1,24 @@
+{% autoescape off %}
+Salut !
+
+L'écran {{ screen.name }} semble rencontrer un problème.
+
+Détail variables :
+
+Token : {{ screen.token }}
+Dernier appel JSON Display : {{ screen.date_last_call }}
+Dernier appel Monitoring : {{ screen.date_last_monitoring }}
+Température : {{ screen.temperature }}
+Load CPU : {{ screen.load }}
+Read Only FS : {{ screen.fs_ro }}
+TV On : {{ screen.tv_screen_on }}
+Hostname : {{ screen.hostname }}
+IP : {{ screen.ip }}
+Place Group : {{ screen.place_group }}
+Plage horaire active : {{ screen.place_group.hour_group }}
+Screen Control Type : {{ screen.get_screen_control_type }}
+Screen Need On : {{ screen.screen_need_on }}
+
+Bon courage !!!
+
+{% endautoescape %}
