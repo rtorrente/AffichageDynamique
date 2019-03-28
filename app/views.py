@@ -310,7 +310,7 @@ def screen_monitoring_endpoint(request):
                 return HttpResponse(screen.screen_need_on)
             else:
                 mail_admins("Reboot screen", "L'écran " + str(
-                    screen.name) + " a reçu une consigne de redemarrage. Dernier call : " + screen.date_last_call)
+                    screen.name) + " a reçu une consigne de redemarrage. Dernier call : " + str(screen.date_last_call))
                 return HttpResponse(3)
         return HttpResponse(300)
     except:
