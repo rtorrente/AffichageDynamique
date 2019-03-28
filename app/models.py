@@ -181,9 +181,9 @@ class Screen(models.Model):
             return False
 
     # Pas une property !
-    def screen_need_on_function(self, time=timezone.now()):
+    def screen_need_on_function(self, time_variable=timezone.now()):
         if self.place_group is not None:
-            now = timezone.localtime(time)
+            now = timezone.localtime(time_variable)
             day = now.isoweekday()
             hour = now.time()
             hour = Hour.objects.filter(hour_group=self.place_group.hour_group).filter(day=day).filter(
@@ -197,7 +197,7 @@ class Screen(models.Model):
 
     @property
     def screen_need_on(self):
-        return self.screen_need_on_function()
+        return self.screen_need_on_function(time_variable=timezone.now())
 
     @property
     def screen_is_off(self):
