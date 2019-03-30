@@ -98,6 +98,10 @@ class Hour(models.Model):
     def __str__(self):
         return self.hour_group.name + " - " + str(self.day) + " " + str(self.first_hour) + " - " + str(self.last_hour)
 
+    @property
+    def get_day_name(self):
+        return DAY_TYPE[self.day - 1][1]
+
 
 class Place(models.Model):
     name = models.CharField(verbose_name="Nom du groupe horaire", blank=False, null=False, max_length=255)

@@ -15,7 +15,7 @@ from AffichageDynamique import settings
 from app import utils
 from .forms import ContentFormImage, RejectContentForm, ScreenMonitoringEndpoint, SubscriptionForm, ContentFormYoutube, \
     ContentFormUrl, RestaurantForm
-from .models import Feed, Content, Subscription, Screen, Image
+from .models import Feed, Content, Subscription, Screen, Image, Hour
 
 User = get_user_model()
 
@@ -40,8 +40,8 @@ def content_create_image(request):
         form.fields["feed"].queryset = Feed.objects.filter(submitter_group__in=request.user.groups.all())
     if form.is_valid():
         form.instance.user = request.user
-        form.instance.content_type="I"
-        form.instance.content_url="image"
+        form.instance.content_type = "I"
+        form.instance.content_url = "image"
         form.instance.state = 'P'
         validator(request.FILES['file'])
         content = form.save()
@@ -67,7 +67,7 @@ def content_create_youtube(request):
         content.save()
         return redirect(reverse("content_list", args=[content.feed.pk]))
     else:
-        return render(request, 'app/add_content.html', locals())
+        return render(request, 'app/add_content.html', {"form": form})
 
 
 def content_create_url(request):
@@ -85,7 +85,7 @@ def content_create_url(request):
         content.save()
         return redirect(reverse("content_list", args=[content.feed.pk]))
     else:
-        return render(request, 'app/add_content.html', locals())
+        return render(request, 'app/add_content.html', {"form": form})
 
 
 def home(request):
@@ -158,11 +158,11 @@ def content_view(request, pk):
                    "can_moderate": can_moderate})
 
 
-def approve_content(request,pk):
-    content = get_object_or_404(Content,pk=pk)
-    if not request.user.is_superuser and content.feed.moderator_group not in request.user.groups.all(): #Modo ou SuperAd
+def approve_content(request, pk):
+    content = get_object_or_404(Content, pk=pk)
+    if not request.user.is_superuser and content.feed.moderator_group not in request.user.groups.all():  # Modo ou SuperAd
         return utils.denied(request)
-    content.state='A'
+    content.state = 'A'
     content.user_moderator = request.user
     content.save()
     msg_plain = render_to_string('app/email_approved.txt', {'user': content.user, 'content': content})
@@ -182,7 +182,7 @@ def reject_content(request, pk):
         if not request.user.is_superuser and content.feed.moderator_group not in request.user.groups.all():  # Modo ou SuperAd
             return utils.denied(request)
         message = form.cleaned_data['reason']
-        content.state='R'
+        content.state = 'R'
         content.user_moderator = request.user
         content.reject_reason = message
         content.save()
@@ -211,7 +211,7 @@ def delete_content(request, pk):
 
 def json_screen(request, token_screen):
     json = []
-    screen = get_object_or_404(Screen,token=token_screen)
+    screen = get_object_or_404(Screen, token=token_screen)
     screen.date_last_call = timezone.now()  # On enregistre l'appel au json (pour le monitoring)
     screen.save()
     # Si l'écran est éteint et qu'il est censé l'être, on affiche une image fixe pour éviter de faire travailler le proc
@@ -235,8 +235,8 @@ def display(request, token_screen):
         else:
             debug = 0
         return render(request, 'app/display.html',
-                  {"screen": screen, "media": settings.MEDIA_URL, "static": settings.STATIC_URL,
-                   "debug": debug})
+                      {"screen": screen, "media": settings.MEDIA_URL, "static": settings.STATIC_URL,
+                       "debug": debug})
     except:
         return render(request, 'app/display_new_screen.html', {"token": token_screen})
 
@@ -255,8 +255,13 @@ def view_screen(request, pk_screen):
         return utils.denied(request)
     urgent = Subscription.objects.filter(screen=screen).filter(subscription_type="U").order_by("-priority")
     normal = Subscription.objects.filter(screen=screen).filter(subscription_type="N").order_by("-priority")
+    hour = Hour.objects.filter(hour_group=screen.place_group.hour_group).order_by("day", 'first_hour')
+    if request.user.is_superuser or screen.owner_group in request.user.groups.all():
+        can_admin = True
+    else:
+        can_admin = False
     return render(request, 'app/view_screen.html',
-                  {"screen": screen, "urgent": urgent, "normal": normal})
+                  {"screen": screen, "urgent": urgent, "normal": normal, "hour_list": hour, "can_admin": can_admin})
 
 
 def delete_subscription(request, pk_sub):
@@ -400,4 +405,4 @@ def restaurant_add(request):
                 utils.save_image(request.FILES[i], content, request.user)
         return redirect(reverse("content_list", args=[content.feed.pk]))
     else:
-        return render(request, 'app/restaurants.html', locals())
+        return render(request, 'app/restaurants.html', {"form": form})

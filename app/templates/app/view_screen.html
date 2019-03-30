@@ -7,7 +7,7 @@
     </div>
     <br>
     <div class="row">
-        <div class="col-sm-3">
+        <div class="col-sm-3 mb-3">
             <!--left col-->
             <ul class="list-group">
                 <li class="list-group-item text-muted" contenteditable="false">Détails</li>
@@ -22,7 +22,23 @@
                     {% if screen.is_ok %}
                         <h2><span class="badge badge-success">En ligne</span></h2>
                     {% else %}
+                        <h2><span class="badge badge-warning">HS</span></h2>
                     {% endif %}
+                </li>
+                <li class="list-group-item text-right"><span class="pull-left"><strong
+                        class="">Groupe d'écran : </strong></span><br> {{ screen.place_group }}
+                </li>
+                <li class="list-group-item text-right"><span class="pull-left"><strong
+                        class="">Planning actif : </strong></span><br> {{ screen.place_group.hour_group.name }}
+                </li>
+                <li class="list-group-item text-right">
+                    {% for hour in hour_list %}
+                        {% ifchanged hour.day %}
+                            <b>{{ hour.get_day_name }}</b><br/>
+                        {% endifchanged %}
+                        {{ hour.first_hour }} - {{ hour.last_hour }}
+                    {% endfor %}
+
                 </li>
             </ul>
         </div>
@@ -30,15 +46,18 @@
         <div class="col-sm-9" style="" contenteditable="false">
             <div class="card">
                 <h5 class="card-header">Flux urgents <i style="font-size: x-small">Aucun contenu "normal" ne s'affiche
-                    si un contenu d'un flux prioritaire est actif</i> <a
-                        href="{% url "add_subscription" screen.pk "U" %}"><i class="far fa-plus-square"></i></a></h5>
+                    si un contenu d'un flux prioritaire est actif</i> {% if can_admin %}<a
+                        href="{% url "add_subscription" screen.pk "U" %}"><i
+                        class="far fa-plus-square"></i></a>{% endif %}</h5>
                 <div class="card-body">
                     {% if urgent %}
-                    {% for content in urgent %}
-                        {{ content.feed }}<a href="{% url "delete_subscription" content.pk %}"><i style="color: red"
-                                                                                                  class="far fa-trash-alt"></i></a>
-                        <br/>
-                    {% endfor %}
+                        {% for content in urgent %}
+                            {{ content.feed }}{% if can_admin %}
+                                <a href="{% url "delete_subscription" content.pk %}"><i style="color: red"
+                                                                                        class="far fa-trash-alt"></i></a>
+                            {% endif %}
+                            <br/>
+                        {% endfor %}
                     {% else %}
                         Aucun flux urgent souscrit
                     {% endif %}
@@ -47,20 +66,23 @@
             </div>
             <br/>
             <div class="card">
-                <h5 class="card-header">Flux normaux <a href="{% url "add_subscription" screen.pk "N" %}"><i
-                        class="far fa-plus-square"></i></a></h5>
+                <h5 class="card-header">Flux normaux {% if can_admin %}
+                    <a href="{% url "add_subscription" screen.pk "N" %}"><i
+                            class="far fa-plus-square"></i></a>{% endif %}</h5>
                 <div class="card-body">
                     {% if normal %}
-                    {% for content in normal %}
-                        {{ content.feed }} - Priorité {{ content.priority }}
-                        {% if content.priority < 10 %}
-                            <a href="{% url "up_subscription" content.pk %}"><i
-                                    class="fas fa-plus-circle"></i></a>{% endif %}
-                            {% if content.priority > 1 %}<a href="{% url "down_subscription" content.pk %}"><i
-                                    class="fas fa-minus-circle"></i></a>{% endif %}
-                        <a href="{% url "delete_subscription" content.pk %}"><i style="color: red"
-                                                                                class="far fa-trash-alt"></i></a><br/>
-                    {% endfor %}
+                        {% for content in normal %}
+                            {{ content.feed }} - Priorité {{ content.priority }}
+                            {% if can_admin %}
+                                {% if content.priority < 10 %}
+                                    <a href="{% url "up_subscription" content.pk %}"><i
+                                            class="fas fa-plus-circle"></i></a>{% endif %}
+                                {% if content.priority > 1 %}<a href="{% url "down_subscription" content.pk %}"><i
+                                        class="fas fa-minus-circle"></i></a>{% endif %}
+                                <a href="{% url "delete_subscription" content.pk %}"><i style="color: red"
+                                                                                        class="far fa-trash-alt"></i></a>
+                            {% endif %}<br/>
+                        {% endfor %}
                     {% else %}
                         Aucun flux normal souscrit
                     {% endif %}
