@@ -144,8 +144,18 @@ def content_view(request, pk):
     form = RejectContentForm(None)
     if content.feed.submitter_group not in request.user.groups.all() and not request.user.is_superuser and content.feed.moderator_group not in request.user.groups.all():
         return utils.denied(request)
+    if request.user.is_superuser or content.feed.moderator_group in request.user.groups.all():
+        can_delete = True
+        can_moderate = True
+    else:
+        can_delete = False
+        can_moderate = False
+    if content.user == request.user:
+        can_delete = True
     image = Image.objects.filter(content=content)
-    return render(request, 'app/content_view.html', {"content": content, "images": image, "form": form})
+    return render(request, 'app/content_view.html',
+                  {"content": content, "images": image, "form": form, "can_delete": can_delete,
+                   "can_moderate": can_moderate})
 
 
 def approve_content(request,pk):
@@ -188,6 +198,15 @@ def reject_content(request, pk):
         return redirect(reverse("content_list_moderate", args=[content.feed.pk]))
     else:
         return redirect(reverse("content_view", args=[pk]))
+
+
+def delete_content(request, pk):
+    content = get_object_or_404(Content, pk=pk)
+    if not request.user.is_superuser and content.feed.moderator_group not in request.user.groups.all() and content.user != request.user:
+        return utils.denied(request)
+    pk_feed = content.feed.pk
+    content.delete()
+    return redirect(reverse("content_list", args=[pk_feed]))
 
 
 def json_screen(request, token_screen):

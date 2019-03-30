@@ -14,6 +14,7 @@ urlpatterns = [
     path('content/view/<int:pk>', login_required(views.content_view), name='content_view'),
     path('content/approve/<int:pk>', login_required(views.approve_content), name='approve_content'),
     path('content/reject/<int:pk>', login_required(views.reject_content), name='reject_content'),
+    path('content/delete/<int:pk>', login_required(views.delete_content), name='delete_content'),
     path('content/add/image/', login_required(views.content_create_image), name="add_content_image"),
     path('content/add/youtube/', login_required(views.content_create_youtube), name="add_content_youtube"),
     path('content/add/url', login_required(views.content_create_url), name="add_content_url"),

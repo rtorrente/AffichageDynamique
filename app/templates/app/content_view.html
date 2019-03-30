@@ -4,8 +4,22 @@
     <div class="row">
         <div class="col">
             <h1 class="">Flux : {{ content.feed.feed_group.name }} - {{ content.feed.name }}</h1>
-            {% if content.state != "A" %}<a href="{% url "approve_content" content.pk %}"><button type="button" class="btn btn-success">Approuver</button></a>{% endif %}
-            {% if content.state != "R" %}<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModal">Rejeter</button>{% endif %}
+            {% if can_moderate %}
+                {% if content.state != "A" %}<a href="{% url "approve_content" content.pk %}">
+                    <button type="button" class="btn btn-success">Approuver</button>
+                </a>{% endif %}
+                {% if content.state != "R" %}
+                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModal">
+                        Rejeter
+                    </button>{% endif %}
+            {% endif %}
+            {% if can_delete %}
+                <form style="display: inline;" method="get" action="{% url "delete_content" content.pk %}">
+                    <button class="btn btn-dark" onclick="return confirm('Etes vous sur ? Ceci est irréversible')">
+                        Supprimer
+                    </button>
+                </form>
+            {% endif %}
             <br>
         </div>
     </div>
