@@ -32,9 +32,9 @@ def convert_pdf_to_img(file1, content):
 
 def resize_img(file1, content):
     img = WandImage(filename=file1)
-    if(img.width>1920):
+    if (img.width > 1920):
         img.resize(width=1920)
-    if(img.height>1080):
+    if (img.height > 1080):
         img.resize(height=1080)
     img.format = "png"
     stream_out = six.BytesIO()

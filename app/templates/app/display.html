@@ -27,11 +27,13 @@
     }
 
 </style>
-<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <script>
-    var json_actuel={};
-    var json_new={};
-    var content_number=0;
+    var json_actuel = {};
+    var json_new = {};
+    var content_number = 0;
+
     function copy(src) {
         return JSON.parse(JSON.stringify(src));
     }
@@ -108,30 +110,33 @@
         }
 
     }
-    function download(){
+
+    function download() {
         log("Call_download_function")
         $.getJSON("{% url "json_screen" screen.token %}")
-            .done(function(data) {
+            .done(function (data) {
                 log("Bien recu")
                 json_new = copy(data);
             })
-            .fail(function() {
+            .fail(function () {
                 log("error");
             });
         setTimeout(download, 120 * 1000);
     }
-    function start(){
+
+    function start() {
         log("Call_start_function")
-        if (json_new.length>0){
+        if (json_new.length > 0) {
             log("content_ok");
             json_actuel = copy(json_new);
             next_content();
         }
-        else{
+        else {
             log("no content");
             setTimeout(start, 10 * 1000);
         }
     }
+
     download(); //Attention ne pas mettre dans start sinon double appel si start échoue une fois
     start();
 </script>

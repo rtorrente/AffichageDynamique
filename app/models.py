@@ -128,8 +128,10 @@ class Feed(models.Model):
     moderator_group = models.ForeignKey(Group, on_delete=models.SET_DEFAULT, default=1, related_name="feed_moderator")
     feed_group = models.ForeignKey(FeedGroup, on_delete=models.PROTECT, null=True, blank=True)
     date_last_moderation_email = models.DateTimeField(editable=True, null=True)
+
     def __str__(self):
         return self.feed_group.name + " - " + self.name
+
     @property
     def count_active(self):
         content = Content.objects.filter(feed=self).filter(is_valid=True)
@@ -151,7 +153,7 @@ class Screen(models.Model):
     load = models.CharField(max_length=16, blank=True, null=True)
     fs_ro = models.BooleanField(default=False)
     tv_screen_on = models.BooleanField(default=False)
-    hostname=models.CharField(blank=True, null=True, max_length=50)
+    hostname = models.CharField(blank=True, null=True, max_length=50)
     ip = models.GenericIPAddressField(blank=True, null=True)
     hidden = models.BooleanField(default=False)
     place_group = models.ForeignKey(Place, null=True, on_delete=models.SET_NULL)
@@ -231,13 +233,14 @@ class Content(models.Model):
     user_moderator = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="+", blank=True)
     reject_reason = models.TextField(null=True, default=None, blank=True)
     begin_date = models.DateTimeField(verbose_name="Début d'affichage", blank=False, null=False)
-    end_date = models.DateTimeField(verbose_name="Fin d'affichage", blank = False, null=False)
+    end_date = models.DateTimeField(verbose_name="Fin d'affichage", blank=False, null=False)
     submission_date = models.DateTimeField(auto_now_add=True)
     content_type = models.CharField(max_length=1, choices=CONTENT_TYPE, default='I')
     content_url = models.CharField(verbose_name='Url du contenu', blank=False, max_length=255, null=True)
     state = models.CharField(max_length=1, choices=CONTENT_STATUT, default='P')
     is_valid = models.BooleanField(null=False, default=False)
-    feed = models.ForeignKey(Feed, verbose_name="Flux d'affichage", related_name="content_feed", blank=False, null=False, on_delete=models.CASCADE)
+    feed = models.ForeignKey(Feed, verbose_name="Flux d'affichage", related_name="content_feed", blank=False,
+                             null=False, on_delete=models.CASCADE)
     duration = models.IntegerField(verbose_name="Durée d'apparition à l'écran")
 
     def __str__(self):

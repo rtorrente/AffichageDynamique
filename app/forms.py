@@ -39,7 +39,7 @@ class ContentFormImage(forms.ModelForm):
                 "minDate": today.isoformat(),
                 "maxDate": (now + timezone.timedelta(days=30)).isoformat(),
                 "defaultDate": today.isoformat(),
-                 }),
+            }),
             'end_date': DateTimePickerInput(format='%d/%m/%Y %H:%M', options={
                 "showClose": False,
                 "showClear": False,
@@ -48,7 +48,7 @@ class ContentFormImage(forms.ModelForm):
                 "minDate": today.isoformat(),
                 "maxDate": (now + timezone.timedelta(days=37)).isoformat(),
                 "defaultDate": end.isoformat()
-                 }),  # specify date-frmat
+            }),  # specify date-frmat
         }
 
 

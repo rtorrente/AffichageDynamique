@@ -29,8 +29,10 @@
             <!--left col-->
             <ul class="list-group">
                 <li class="list-group-item text-muted" contenteditable="false">Détails</li>
-                <li class="list-group-item text-right"><span class="pull-left"><strong class="">Titre: </strong></span><br> {{ content.name }}</li>
-                <li class="list-group-item text-right"><span class="pull-left"><strong class="">Utilisateur : </strong></span><br> {{ content.user.first_name }} {{ content.user.last_name }}<br/>{{ content.user.email }}</li>
+                <li class="list-group-item text-right"><span class="pull-left"><strong
+                        class="">Titre: </strong></span><br> {{ content.name }}</li>
+                <li class="list-group-item text-right"><span class="pull-left"><strong class="">Utilisateur : </strong></span><br> {{ content.user.first_name }} {{ content.user.last_name }}<br/>{{ content.user.email }}
+                </li>
                 {% if content.user_moderator is not None %}
                     <li class="list-group-item text-right"><span class="pull-left"><strong
                             class="">Modérateur : </strong></span><br>{{ content.user_moderator.first_name }}
@@ -40,9 +42,13 @@
                         class="">Dates : </strong></span> {{ content.begin_date }} - {{ content.end_date }}
                     ({{ content.begin_date|timesince:content.end_date }})
                 </li>
-                <li class="list-group-item text-right"><span class="pull-left"><strong class="">Durée : </strong></span> {{ content.duration }} seconde{{ content.duration|pluralize }}</li>
-                <li class="list-group-item text-right"><span class="pull-left"><strong class="">Type : </strong></span>{{ content.content_type }}</li>
-                <li class="list-group-item text-right"><span class="pull-left"><strong class="">Statut : </strong></span><br>
+                <li class="list-group-item text-right"><span class="pull-left"><strong
+                        class="">Durée : </strong></span> {{ content.duration }} seconde{{ content.duration|pluralize }}
+                </li>
+                <li class="list-group-item text-right"><span class="pull-left"><strong
+                        class="">Type : </strong></span>{{ content.content_type }}</li>
+                <li class="list-group-item text-right"><span class="pull-left"><strong
+                        class="">Statut : </strong></span><br>
                     {% if content.state == "P" %}
                         <span class="badge badge-warning">En modération</span>
                     {% elif content.state == "R" %}
@@ -56,16 +62,17 @@
                             <span class="badge badge-success">En diffusion</span>
                         {% endif %}
                     {% endif %}</li>
-                <li class="list-group-item text-right"><span class="pull-left"><strong class="">Nombre image{{ images.count|pluralize }} : </strong></span> {{ images.count }}</li>
+                <li class="list-group-item text-right"><span class="pull-left"><strong
+                        class="">Nombre image{{ images.count|pluralize }} : </strong></span> {{ images.count }}</li>
             </ul>
         </div>
         <!--/col-3-->
         <div class="col-sm-9" style="" contenteditable="false">
             {% if content.content_type == "I" %}
-            {% for image in images %}
-                <img src="{{ image.get_image_url }}" style="max-width: 100%; max-height: auto"> <br/>
-                <h5 align="center">Dimensions : {{ image.get_image_size.0 }} x {{ image.get_image_size.1 }}</h5>
-            {% endfor %}
+                {% for image in images %}
+                    <img src="{{ image.get_image_url }}" style="max-width: 100%; max-height: auto"> <br/>
+                    <h5 align="center">Dimensions : {{ image.get_image_size.0 }} x {{ image.get_image_size.1 }}</h5>
+                {% endfor %}
             {% elif content.content_type == "Y" %}
                 <iframe id="ytplayer" type="text/html" height="100%" width="100%"
                         src="https://www.youtube.com/embed/{{ content.content_url }}?VQ=HD1080"
@@ -79,7 +86,8 @@
 
     {% if content.state != "R" %}
         <!-- Modal -->
-        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+             aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -95,7 +103,8 @@
                             {{ form|crispy }}
                     </div>
                     <div class="modal-footer">
-                        <button class="btn btn-primary">Valider le rejet</button></form>
+                        <button class="btn btn-primary">Valider le rejet</button>
+                        </form>
                     </div>
                 </div>
             </div>

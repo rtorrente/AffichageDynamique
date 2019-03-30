@@ -9,6 +9,7 @@ from .models import Image, Content, Feed, Screen
 
 User = get_user_model()
 
+
 def delete_image_orphan():
     list = os.listdir(settings.MEDIA_ROOT + "/contents")
     image = Image.objects.all()

@@ -4,36 +4,37 @@
         <div class="alert alert-primary" role="alert">
             FUN STATS<br>
             <b>Contenus</b> :
-            <ul style="margin:0; padding:0:">Actifs : {{ stat.active }}</ul>
-            <ul style="margin:0; padding:0:">Depuis le début : {{ stat.since_creation }}</ul>
+            <ul style="margin:0; padding:0">Actifs : {{ stat.active }}</ul>
+            <ul style="margin:0; padding:0">Depuis le début : {{ stat.since_creation }}</ul>
             <b>Ecrans</b> :
-            <ul style="margin:0; padding:0:">Inscrits : {{ stat.screen_total }}</ul>
-            <ul style="margin:0; padding:0:">Sans problème : {{ stat.screen_ok }}</ul>
-            <ul style="margin:0; padding:0:">Diffusant actuellement : {{ stat.screen_on }}</ul>
+            <ul style="margin:0; padding:0">Inscrits : {{ stat.screen_total }}</ul>
+            <ul style="margin:0; padding:0">Sans problème : {{ stat.screen_ok }}</ul>
+            <ul style="margin:0; padding:0">Diffusant actuellement : {{ stat.screen_on }}</ul>
             <b>Utilisateurs</b> :
-            <ul style="margin:0; padding:0:">Actifs : {{ stat.user_active }}</ul>
-            <ul style="margin:0; padding:0:">Depuis le début : {{ stat.user_total }}</ul>
+            <ul style="margin:0; padding:0">Actifs : {{ stat.user_active }}</ul>
+            <ul style="margin:0; padding:0">Depuis le début : {{ stat.user_total }}</ul>
         </div>
     {% endif %}
-    <div><div>
-        {% if feed %}
-            {% for team in feed %}
-                {% ifchanged team.feed_group.name %}
-                    </div></div><br/>
-                    <div class="card">
-                    <h5 class="card-header">{{ team.feed_group.name }}</h5>
-                    <div class="card-body">
-                {% endifchanged %}
-                <div class="row">
-                    <div class="col"><h6><a href="{% url "content_list" team.pk %}">{{ team.name }}</a><br/><span
-                            style="font-size: smaller">{{ team.description }}</span></h6></div>
-                    <div class="col"><span
-                            class="badge badge-secondary">{{ team.count_active }} contenu{{ team.count_active|pluralize }} actif{{ team.count_active|pluralize }}</span>
+    <div>
+        <div>
+            {% if feed %}
+                {% for team in feed %}
+                    {% ifchanged team.feed_group.name %}
+                        </div></div><br/>
+                        <div class="card">
+                        <h5 class="card-header">{{ team.feed_group.name }}</h5>
+                        <div class="card-body">
+                    {% endifchanged %}
+                    <div class="row">
+                        <div class="col"><h6><a href="{% url "content_list" team.pk %}">{{ team.name }}</a><br/><span
+                                style="font-size: smaller">{{ team.description }}</span></h6></div>
+                        <div class="col"><span
+                                class="badge badge-secondary">{{ team.count_active }} contenu{{ team.count_active|pluralize }} actif{{ team.count_active|pluralize }}</span>
+                        </div>
                     </div>
-                </div>
-            {% endfor %}
-        {% else %}
-            Aucun flux à afficher
-        {% endif %}
-        </div></div> <br/>
+                {% endfor %}
+            {% else %}
+                Aucun flux à afficher
+            {% endif %}
+            </div></div> <br/>
 {% endblock %}
