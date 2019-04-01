@@ -29,7 +29,7 @@ class ContentFormImage(forms.ModelForm):
         today = timezone.datetime.combine(now, timezone.datetime(1, 1, 1, hour=6).time())
         end = timezone.datetime.combine(now + timezone.timedelta(days=7), timezone.datetime(1, 1, 1, hour=23).time())
         model = Content
-        exclude = ('user', 'content_type', 'content_url', 'state', 'is_valid', 'user_moderator', 'reject_reason')
+        fields = ['name', 'begin_date', 'end_date', 'feed', 'duration']
         widgets = {
             'begin_date': DateTimePickerInput(format='%d/%m/%Y %H:%M', options={
                 "showClose": False,
@@ -58,7 +58,7 @@ class ContentFormYoutube(forms.ModelForm):
         today = timezone.datetime.combine(now, timezone.datetime(1, 1, 1, hour=6).time())
         end = timezone.datetime.combine(now + timezone.timedelta(days=7), timezone.datetime(1, 1, 1, hour=23).time())
         model = Content
-        exclude = ('user', 'content_type', 'state', 'is_valid', 'user_moderator', 'reject_reason')
+        fields = ['name', 'begin_date', 'end_date', 'content_url', 'feed', 'duration']
         labels = {"content_url": "ID Vidéo Youtube"}
         widgets = {
             'begin_date': DateTimePickerInput(format='%d/%m/%Y %H:%M', options={
@@ -88,7 +88,7 @@ class ContentFormUrl(forms.ModelForm):
         today = timezone.datetime.combine(now, timezone.datetime(1, 1, 1, hour=6).time())
         end = timezone.datetime.combine(now + timezone.timedelta(days=7), timezone.datetime(1, 1, 1, hour=23).time())
         model = Content
-        exclude = ('user', 'content_type', 'state', 'is_valid', 'user_moderator', 'reject_reason')
+        fields = ['name', 'begin_date', 'end_date', 'content_url', 'feed', 'duration']
         labels = {"content_url": "Lien page web (HTTPS uniquement)"}
         widgets = {
             'begin_date': DateTimePickerInput(format='%d/%m/%Y %H:%M', options={
@@ -108,6 +108,27 @@ class ContentFormUrl(forms.ModelForm):
                 "minDate": today.isoformat(),
                 "maxDate": (now + timezone.timedelta(days=37)).isoformat(),
                 "defaultDate": end.isoformat()
+            }),  # specify date-frmat
+        }
+
+
+class ContentUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Content
+        fields = ['begin_date', 'end_date', 'duration']
+        labels = {"content_url": "Lien page web HTTPS ou ID Vidéo"}
+        widgets = {
+            'begin_date': DateTimePickerInput(format='%d/%m/%Y %H:%M', options={
+                "showClose": False,
+                "showClear": False,
+                "showTodayButton": False,
+                "locale": "fr",
+            }),
+            'end_date': DateTimePickerInput(format='%d/%m/%Y %H:%M', options={
+                "showClose": False,
+                "showClear": False,
+                "showTodayButton": False,
+                "locale": "fr",
             }),  # specify date-frmat
         }
 

@@ -14,7 +14,7 @@ from upload_validator import FileTypeValidator
 from AffichageDynamique import settings
 from app import utils
 from .forms import ContentFormImage, RejectContentForm, ScreenMonitoringEndpoint, SubscriptionForm, ContentFormYoutube, \
-    ContentFormUrl, RestaurantForm
+    ContentFormUrl, RestaurantForm, ContentUpdateForm
 from .models import Feed, Content, Subscription, Screen, Image, Hour
 
 User = get_user_model()
@@ -207,6 +207,17 @@ def delete_content(request, pk):
     pk_feed = content.feed.pk
     content.delete()
     return redirect(reverse("content_list", args=[pk_feed]))
+
+
+def update_content(request, pk):
+    content = get_object_or_404(Content, pk=pk)
+    if not request.user.is_superuser and content.feed.moderator_group not in request.user.groups.all():
+        return utils.denied(request)
+    form = ContentUpdateForm(request.POST or None, instance=content)
+    if form.is_valid():
+        form.save()
+        return redirect(reverse("content_view", args=[pk]))
+    return render(request, 'app/edit_content.html', {'form': form, 'content': content})
 
 
 def json_screen(request, token_screen):
