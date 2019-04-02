@@ -110,6 +110,10 @@ class Place(models.Model):
     def __str__(self):
         return self.name
 
+    @property
+    def count_screen(self):
+        return Screen.objects.filter(place_group=self).count()
+
 
 class FeedGroup(models.Model):
     name = models.CharField(verbose_name='Nom du groupe de flux', blank=False, max_length=255, null=False)

@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
+    <a href="{% url "list_place" %}"><button type="button" class="btn btn-primary">Voir zone écran</button></a>
     <div class="alert alert-primary" role="alert">
         {{ screen.count }} écran{{ screen.count |pluralize }} visible{{ screen.count |pluralize }}
     </div>

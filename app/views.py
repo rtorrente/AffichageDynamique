@@ -15,7 +15,7 @@ from AffichageDynamique import settings
 from app import utils
 from .forms import ContentFormImage, RejectContentForm, ScreenMonitoringEndpoint, SubscriptionForm, ContentFormYoutube, \
     ContentFormUrl, RestaurantForm, ContentUpdateForm
-from .models import Feed, Content, Subscription, Screen, Image, Hour
+from .models import Feed, Content, Subscription, Screen, Image, Hour, Place
 
 User = get_user_model()
 
@@ -250,6 +250,18 @@ def display(request, token_screen):
                        "debug": debug})
     except:
         return render(request, 'app/display_new_screen.html', {"token": token_screen})
+
+
+def list_place(request):
+    place = Place.objects.all()
+    return render(request, 'app/list_place.html', {"place_list": place})
+
+
+def view_place(request, pk):
+    place = get_object_or_404(Place, pk=pk)
+    hour = Hour.objects.filter(hour_group=place.hour_group).order_by("day", 'first_hour')
+    screen = Screen.objects.filter(place_group=place)
+    return render(request, 'app/view_place.html', {"place": place, "screen_list": screen, "hour_list": hour})
 
 
 def list_screen(request):

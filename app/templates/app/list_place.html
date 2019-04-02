@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load app_filters %}
+{% block content %}
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">Nom</th>
+                <th scope="col">Planning actif</th>
+                <th scope="col">Nombre d'écran</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for place in place_list %}
+                <tr>
+                    <td><a href="{% url "view_place" place.pk %}">{{ place.name }}</a></td>
+                    <td>{{ place.hour_group }}</td>
+                    <td>{{ place.count_screen }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

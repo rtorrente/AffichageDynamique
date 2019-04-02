@@ -28,6 +28,10 @@ urlpatterns = [
     path('screen/view/<int:pk_screen>', login_required(views.view_screen), name='view_screen'),
     path('screen/monitoring/', login_required(views.screen_monitoring), name='screen_monitoring'),
 
+    # Place
+    path('place/list/', login_required(views.list_place), name='list_place'),
+    path('place/view/<int:pk>', login_required(views.view_place), name='view_place'),
+
     # Subscription
     path('subscription/delete/<int:pk_sub>', login_required(views.delete_subscription), name='delete_subscription'),
     path('subscription/add/<int:pk_screen>/<str:type_sub>', login_required(views.add_subscription),

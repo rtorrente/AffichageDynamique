@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load app_filters %}
+{% block content %}
+    <h1>{{ place.name }}</h1>
+    <h6>Horaires actifs : {{ place.hour_group }}</h6>
+    {% for hour in hour_list %}
+                        {% ifchanged hour.day %}
+                            <b>{{ hour.get_day_name }}</b><br/>
+                        {% endifchanged %}
+        {{ hour.first_hour }} - {{ hour.last_hour }}<br/>
+    {% endfor %}
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">Nom</th>
+                <th scope="col">Est ok</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for screen in screen_list %}
+                <tr>
+                    <td><a href="{% url "view_screen" screen.pk %}">{{ screen.name }}</a></td>
+                    <td>{{ screen.is_ok|iconbool }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

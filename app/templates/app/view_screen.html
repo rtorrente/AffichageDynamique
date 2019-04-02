@@ -26,7 +26,7 @@
                     {% endif %}
                 </li>
                 <li class="list-group-item text-right"><span class="pull-left"><strong
-                        class="">Groupe d'écran : </strong></span><br> {{ screen.place_group }}
+                        class="">Groupe d'écran : </strong></span><br> <a href="{% url "view_place" screen.place_group.pk %}">{{ screen.place_group }}</a>
                 </li>
                 <li class="list-group-item text-right"><span class="pull-left"><strong
                         class="">Planning actif : </strong></span><br> {{ screen.place_group.hour_group.name }}
