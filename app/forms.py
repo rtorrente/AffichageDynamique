@@ -52,6 +52,7 @@ class ContentFormImage(forms.ModelForm):
         }
 
 
+
 class ContentFormYoutube(forms.ModelForm):
     class Meta:
         now = timezone.now()

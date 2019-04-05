@@ -245,7 +245,7 @@ class Content(models.Model):
     is_valid = models.BooleanField(null=False, default=False)
     feed = models.ForeignKey(Feed, verbose_name="Flux d'affichage", related_name="content_feed", blank=False,
                              null=False, on_delete=models.CASCADE)
-    duration = models.IntegerField(verbose_name="Durée d'apparition à l'écran")
+    duration = models.IntegerField(verbose_name="Durée d'apparition à l'écran", default=7)
 
     def __str__(self):
         return self.name
