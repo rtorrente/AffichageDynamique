@@ -45,7 +45,8 @@ INSTALLED_APPS = [
     'bootstrap_datepicker_plus',
     'django_registration',
     'django_crontab',
-    'captcha'
+    'captcha',
+    'analytical'
 ]
 
 MIDDLEWARE = [
@@ -169,3 +170,5 @@ RECAPTCHA_PRIVATE_KEY = os.getenv('RECAPTCHA_PRIVATE_KEY', "")
 
 RESTAURANTS_FEED_PK = os.getenv('RESTAURANTS_FEED_PK', 2)
 RESTAURANTS_GROUP_PK = os.getenv('RESTAURANTS_GROUP_PK', 2)
+
+GOOGLE_ANALYTICS_PROPERTY_ID = os.getenv('GOOGLE_ANALYTICS_PROPERTY_ID')

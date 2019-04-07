@@ -1,9 +1,10 @@
 {% load static %}
 {% load crispy_forms_tags %}
-
+{% load analytical %}
 <!doctype html>
 <html lang="fr">
 <head>
+    {% analytical_head_top %}
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
@@ -16,9 +17,11 @@
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <!-- Custom styles for this template -->
     <link href="{% static 'css/floating-labels.css' %}" rel="stylesheet">
+    {% analytical_head_bottom %}
 </head>
 
 <body>
+{% analytical_body_top %}
 <div class="container">
     <main role="main" class="flex-shrink-0">
         <div class="text-center">
@@ -34,5 +37,6 @@
         </div>
     </main>
 </div>
+{% analytical_body_bottom %}
 </body>
 </html>

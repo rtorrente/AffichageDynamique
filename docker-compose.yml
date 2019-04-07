@@ -24,6 +24,7 @@ services:
       RESTAURANTS_GROUP_PK:
       RESTAURANTS_FEED_PK:
       EMAIL_SUBJECT_PREFIX: '[Affichage Dynamique]'
+      GOOGLE_ANALYTICS_PROPERTY_ID:
     stdin_open: true
     restart: always
     expose:
