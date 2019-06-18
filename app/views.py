@@ -235,6 +235,12 @@ def json_screen(request, token_screen):
     if len(json) == 0:
         subscription = Subscription.objects.filter(subscription_type="N").filter(screen=screen)
         json = utils.json_append(subscription)
+    # Si après avoir rempli les flux normaux et prio le json est toujours vide, on lance l'affichage vide
+    if len(json) == 0:
+        image = {'type': 'empty1', 'content': "", 'duration': 10}
+        json.append(image)
+        image = {'type': 'empty2', 'content': "", 'duration': 10}
+        json.append(image)
     return JsonResponse(json, safe=False)
 
 

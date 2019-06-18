@@ -69,7 +69,7 @@
         log(json_actuel[content_number].type);
         if (json_actuel.length === 0) {
             log("fin de parsage d'une liste");
-            $("#content1").html("<img style=\"max-height: 100%; max-width: 100%\" src=\"{{ static }}logo_no_content.png\">")
+            $("#content1").html("<img style=\"max-height: 100%; max-width: 100%\" src=\"{{ static }}logo_no_content1.png\">");
             content_number = 0;
             if (json_new.length > 0) {
                 json_actuel = copy(json_new);
@@ -95,6 +95,10 @@
                     'frameborder="0" allowfullscreen></iframe>');
             } else if (json_actuel[content_number].type === "off") {
                 future_div.html('<img onload="load_ok()" style="max-height: 100%; max-width: 100%" src="{{ static }}logo_screen_off.png">');
+            } else if (json_actuel[content_number].type === "empty1") {
+                future_div.html('<img onload="load_ok()" style="max-height: 100%; max-width: 100%" src="{{ static }}logo_no_content1.png">');
+            } else if (json_actuel[content_number].type === "empty2") {
+                future_div.html('<img onload="load_ok()" style="max-height: 100%; max-width: 100%" src="{{ static }}logo_no_content2.png">');
             }
             setTimeout(next_content, json_actuel[content_number].duration * 1000);
             content_number++;
